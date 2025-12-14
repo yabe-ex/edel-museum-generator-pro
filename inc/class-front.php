@@ -10,42 +10,58 @@ class EdelMuseumGeneratorFrontPro {
 
     public function front_enqueue() {
         $is_edit_mode = isset($_GET['museum_edit']) && $_GET['museum_edit'] === '1';
-        $version = (defined('EDEL_MUSEUM_PRO_DEVELOP') && true === EDEL_MUSEUM_PRO_DEVELOP) ? time() : EDEL_MUSEUM_PRO_VERSION;
+        $version = (defined('EDEL_MUSEUM_GENERATOR_PRO_DEVELOP') && true === EDEL_MUSEUM_GENERATOR_PRO_DEVELOP) ? time() : EDEL_MUSEUM_GENERATOR_PRO_VERSION;
 
         wp_enqueue_script('three', 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js', array(), '0.128.0', true);
         wp_enqueue_script('three-gltf-loader', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js', array('three'), '0.128.0', true);
-
-        // ★追加: スマホ用ジョイスティックライブラリ
         wp_enqueue_script('nipplejs', 'https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipple.min.js', array(), '0.10.1', true);
 
         $localize_data = array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce'   => wp_create_nonce(EDEL_MUSEUM_PRO_SLUG),
+            'nonce'   => wp_create_nonce(EDEL_MUSEUM_GENERATOR_PRO_SLUG), // ★修正
             'action_save'  => 'edel_museum_pro_save_layout',
             'action_clear' => 'edel_museum_pro_clear_layout',
             'txt_saved' => __('Saved!', 'edel-museum-generator'),
             'txt_error' => __('Error', 'edel-museum-generator'),
             'txt_reset' => __('Reset', 'edel-museum-generator'),
-            'txt_confirm_reset' => __('Are you sure you want to reset layout?', 'edel-museum-generator')
+            'txt_confirm_reset' => __('Are you sure you want to reset layout?', 'edel-museum-generator'),
+            // Editor Labels
+            'txt_move_t'   => __('Move (T)', 'edel-museum-generator'),
+            'txt_rotate_r' => __('Rotate (R)', 'edel-museum-generator'),
+            'txt_loading_assets' => __('Loading Assets...', 'edel-museum-generator'),
+            // Viewer Controls
+            'txt_controls_title' => __('Controls', 'edel-museum-generator'),
+            'txt_move'   => __('Move:', 'edel-museum-generator'),
+            'txt_height' => __('Height:', 'edel-museum-generator'),
+            'txt_look'   => __('Look:', 'edel-museum-generator'),
+            'txt_cursor' => __('Cursor:', 'edel-museum-generator'),
+            'txt_esc_desc' => __('ESC (Back / Unlock)', 'edel-museum-generator'),
+            // Viewer Settings
+            'txt_room'      => __('Room', 'edel-museum-generator'),
+            'txt_spotlight' => __('Spotlight', 'edel-museum-generator'),
+            'txt_view_details' => __('View Details', 'edel-museum-generator'),
+            'txt_loading' => __('Loading...', 'edel-museum-generator')
         );
 
         if ($is_edit_mode) {
             wp_enqueue_script('three-orbitcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js', array('three'), '0.128.0', true);
             wp_enqueue_script('three-transformcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js', array('three'), '0.128.0', true);
 
-            wp_enqueue_script(EDEL_MUSEUM_PRO_SLUG . '-editor', EDEL_MUSEUM_PRO_URL . '/js/edel-editor.js', array('jquery', 'three', 'three-orbitcontrols', 'three-transformcontrols', 'three-gltf-loader'), $version, true);
-            wp_localize_script(EDEL_MUSEUM_PRO_SLUG . '-editor', 'edel_vars', $localize_data);
+            // ★定数変更
+            wp_enqueue_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-editor', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/edel-editor.js', array('jquery', 'three', 'three-orbitcontrols', 'three-transformcontrols', 'three-gltf-loader'), $version, true);
+            wp_localize_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-editor', 'edel_vars', $localize_data);
         } else {
             wp_enqueue_script('three-pointerlockcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js', array('three'), '0.128.0', true);
 
-            wp_enqueue_script(EDEL_MUSEUM_PRO_SLUG . '-viewer', EDEL_MUSEUM_PRO_URL . '/js/edel-viewer.js', array('jquery', 'three', 'three-pointerlockcontrols', 'three-gltf-loader', 'nipplejs'), $version, true);
-            wp_localize_script(EDEL_MUSEUM_PRO_SLUG . '-viewer', 'edel_vars', $localize_data);
+            // ★定数変更
+            wp_enqueue_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-viewer', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/edel-viewer.js', array('jquery', 'three', 'three-pointerlockcontrols', 'three-gltf-loader', 'nipplejs'), $version, true);
+            wp_localize_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-viewer', 'edel_vars', $localize_data);
         }
 
-        wp_enqueue_style(EDEL_MUSEUM_PRO_SLUG . '-front', EDEL_MUSEUM_PRO_URL . '/css/front.css', array(), $version);
+        // ★定数変更
+        wp_enqueue_style(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-front', EDEL_MUSEUM_GENERATOR_PRO_URL . '/css/front.css', array(), $version);
     }
 
-    // ... (以下の build_layout_from_exhibition, render_museum_shortcode は変更なし。前回のままでOK) ...
     private function build_layout_from_exhibition($exhibition_id) {
         $meta = get_post_meta($exhibition_id, '_edel_exhibition_data', true);
         if (!$meta) return null;
@@ -105,6 +121,7 @@ class EdelMuseumGeneratorFrontPro {
             $is_free = ($wall_key === 'free');
             $is_pillar = (strpos($wall_key, 'p1_') === 0 || strpos($wall_key, 'p2_') === 0);
             $target_pillar = null;
+
             if ($is_pillar) {
                 $pid = substr($wall_key, 0, 2);
                 foreach ($pillars_data as $p) {
@@ -134,8 +151,10 @@ class EdelMuseumGeneratorFrontPro {
             foreach ($ids as $i => $art_id) {
                 $art_post = get_post($art_id);
                 if (!$art_post || $art_post->post_type !== 'edel_artwork') continue;
+
                 $img_url = get_the_post_thumbnail_url($art_id, 'large');
                 $glb_url = get_post_meta($art_id, '_edel_art_glb', true);
+
                 if (!$img_url && !$glb_url) continue;
 
                 $offset = $start_pos + ($i * $spacing);
@@ -190,8 +209,8 @@ class EdelMuseumGeneratorFrontPro {
                     'link'  => get_post_meta($art_id, '_edel_art_link', true),
                     'wall'  => $wall_key,
                     'x'     => $px,
-                    'y' => $is_free ? 0 : 1.5,
-                    'z' => $pz,
+                    'y'     => $is_free ? 0 : 1.5,
+                    'z'     => $pz,
                     'scale' => array('x' => 1, 'y' => 1, 'z' => 1),
                 );
             }

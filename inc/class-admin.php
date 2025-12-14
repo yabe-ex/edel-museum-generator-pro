@@ -15,9 +15,10 @@ class EdelMuseumGeneratorAdminPro {
 
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
+        // ヘルプメニュー
         add_action('admin_menu', array($this, 'add_help_menu'));
 
-        // ★追加: ショートコード機能
+        // ショートコード表示機能
         add_filter('manage_edel_exhibition_posts_columns', array($this, 'add_shortcode_column_head'));
         add_action('manage_edel_exhibition_posts_custom_column', array($this, 'add_shortcode_column_content'), 10, 2);
         add_action('edit_form_after_title', array($this, 'render_shortcode_after_title'));
@@ -51,76 +52,77 @@ class EdelMuseumGeneratorAdminPro {
 
                 <h2 style="border-bottom: 2px solid #2271b1; padding-bottom: 10px; margin-bottom: 20px;">
                     <span class="dashicons dashicons-art" style="font-size:24px;width:24px;height:24px;margin-right:5px;"></span>
-                    Step 1: Add Artworks
+                    <?php _e('Step 1: Add Artworks', 'edel-museum-generator'); ?>
                 </h2>
-                <p>First, register the artworks (images or 3D models) you want to display in the museum.</p>
+                <p><?php _e('First, register the artworks (images or 3D models) you want to display in the museum.', 'edel-museum-generator'); ?></p>
                 <ol style="margin-left: 20px; line-height: 1.8;">
-                    <li>Go to <strong>Museum Artworks > Add New Artwork</strong>.</li>
-                    <li>Enter the <strong>Title</strong> and <strong>Description</strong> (displayed in the popup).</li>
+                    <li><?php _e('Go to <strong>Museum Artworks > Add New Artwork</strong>.', 'edel-museum-generator'); ?></li>
+                    <li><?php _e('Enter the <strong>Title</strong> and <strong>Description</strong> (displayed in the popup).', 'edel-museum-generator'); ?></li>
                     <li>
-                        <strong>For 2D Images (Paintings):</strong><br>
-                        Set the <strong>Featured Image</strong> (right sidebar). This will be framed on the wall.
+                        <strong><?php _e('For 2D Images (Paintings):', 'edel-museum-generator'); ?></strong><br>
+                        <?php _e('Set the <strong>Featured Image</strong> (right sidebar). This will be framed on the wall.', 'edel-museum-generator'); ?>
                     </li>
                     <li>
-                        <strong>For 3D Models (Sculptures/Objects):</strong><br>
-                        Scroll down to "Artwork Options" and upload a <strong>.glb</strong> file.<br>
-                        <em>*Note: If a GLB file is set, it will be used instead of the Featured Image.</em>
+                        <strong><?php _e('For 3D Models (Sculptures/Objects):', 'edel-museum-generator'); ?></strong><br>
+                        <?php _e('Scroll down to "Artwork Options" and upload a <strong>.glb</strong> file.', 'edel-museum-generator'); ?><br>
+                        <em><?php _e('*Note: If a GLB file is set, it will be used instead of the Featured Image.', 'edel-museum-generator'); ?></em>
                     </li>
-                    <li><strong>Link URL (Optional):</strong> Enter a URL if you want to link to an external page.</li>
+                    <li><strong><?php _e('Link URL (Optional):', 'edel-museum-generator'); ?></strong> <?php _e('Enter a URL if you want to link to an external page.', 'edel-museum-generator'); ?></li>
                 </ol>
 
                 <h2 style="border-bottom: 2px solid #2271b1; padding-bottom: 10px; margin-bottom: 20px; margin-top: 40px;">
                     <span class="dashicons dashicons-building" style="font-size:24px;width:24px;height:24px;margin-right:5px;"></span>
-                    Step 2: Create Exhibition Room
+                    <?php _e('Step 2: Create Exhibition Room', 'edel-museum-generator'); ?>
                 </h2>
-                <p>Create a room and decide which artworks to place on which walls.</p>
+                <p><?php _e('Create a room and decide which artworks to place on which walls.', 'edel-museum-generator'); ?></p>
                 <ol style="margin-left: 20px; line-height: 1.8;">
-                    <li>Go to <strong>Exhibition Settings > Add New Exhibition</strong>.</li>
-                    <li><strong>Textures:</strong> Select images for Floor, Wall, Pillar, and Ceiling.</li>
-                    <li><strong>Structure:</strong> Choose the number of pillars (0, 1, or 2).</li>
-                    <li><strong>Placement:</strong>
+                    <li><?php _e('Go to <strong>Exhibition Settings > Add New Exhibition</strong>.', 'edel-museum-generator'); ?></li>
+                    <li><strong><?php _e('Textures:', 'edel-museum-generator'); ?></strong> <?php _e('Select images for Floor, Wall, Pillar, and Ceiling.', 'edel-museum-generator'); ?></li>
+                    <li><strong><?php _e('Structure:', 'edel-museum-generator'); ?></strong> <?php _e('Choose the number of pillars (0, 1, or 2).', 'edel-museum-generator'); ?></li>
+                    <li><strong><?php _e('Placement:', 'edel-museum-generator'); ?></strong>
                         <ul style="list-style:disc; margin-left:20px; color:#555;">
-                            <li><strong>Walls/Pillars:</strong> Click <strong>"Select"</strong> to choose 2D artworks.</li>
-                            <li><strong>Free Space:</strong> Click <strong>"Select"</strong> to choose 3D artworks (.glb).</li>
+                            <li><strong><?php _e('Walls/Pillars:', 'edel-museum-generator'); ?></strong> <?php _e('Click <strong>"Select"</strong> to choose 2D artworks.', 'edel-museum-generator'); ?></li>
+                            <li><strong><?php _e('Free Space:', 'edel-museum-generator'); ?></strong> <?php _e('Click <strong>"Select"</strong> to choose 3D artworks (.glb).', 'edel-museum-generator'); ?></li>
                         </ul>
                     </li>
-                    <li><strong>Settings:</strong> Adjust Brightness and <strong>Movement Speed</strong> (Default: 20.0).</li>
+                    <li><strong><?php _e('Settings:', 'edel-museum-generator'); ?></strong> <?php _e('Adjust Brightness and <strong>Movement Speed</strong> (Default: 20.0).', 'edel-museum-generator'); ?></li>
                 </ol>
 
                 <h2 style="border-bottom: 2px solid #2271b1; padding-bottom: 10px; margin-bottom: 20px; margin-top: 40px;">
                     <span class="dashicons dashicons-move" style="font-size:24px;width:24px;height:24px;margin-right:5px;"></span>
-                    Step 3: 3D Layout Editor
+                    <?php _e('Step 3: 3D Layout Editor', 'edel-museum-generator'); ?>
                 </h2>
-                <p>Fine-tune the position, size, and angle of your artworks in real-time 3D.</p>
+                <p><?php _e('Fine-tune the position, size, and angle of your artworks in real-time 3D.', 'edel-museum-generator'); ?></p>
                 <div style="background: #f0f0f1; padding: 15px; border-left: 4px solid #2271b1;">
-                    <strong><span class="dashicons dashicons-lightbulb"></span> Tip:</strong> You must <strong>Publish/Update</strong> the Exhibition post first to generate the preview.
+                    <strong><span class="dashicons dashicons-lightbulb"></span> <?php _e('Tip:', 'edel-museum-generator'); ?></strong> <?php _e('You must <strong>Publish/Update</strong> the Exhibition post first to generate the preview.', 'edel-museum-generator'); ?>
                 </div>
                 <ol style="margin-left: 20px; line-height: 1.8; margin-top: 15px;">
-                    <li>View the Exhibition post on the front-end (click "View Exhibition").</li>
-                    <li>Click the <strong>"Switch to Editor"</strong> button at the top right.</li>
-                    <li><strong>Select an Object:</strong> Click on any artwork in the room.</li>
-                    <li><strong>Controls:</strong>
+                    <li><?php _e('View the Exhibition post on the front-end (click "View Exhibition").', 'edel-museum-generator'); ?></li>
+                    <li><?php _e('Click the <strong>"Switch to Editor"</strong> button at the top right.', 'edel-museum-generator'); ?></li>
+                    <li><strong><?php _e('Select an Object:', 'edel-museum-generator'); ?></strong> <?php _e('Click on any artwork in the room.', 'edel-museum-generator'); ?></li>
+                    <li><strong><?php _e('Controls:', 'edel-museum-generator'); ?></strong>
                         <ul style="list-style:disc; margin-left:20px; color:#555;">
-                            <li><strong>Move (T):</strong> Drag arrows to move the object.</li>
-                            <li><strong>Rotate (R):</strong> Drag the circle or use the slider to rotate.</li>
-                            <li><strong>Scale:</strong> Use the slider to resize (0.1x to 3.0x).</li>
+                            <li><strong><?php _e('Move (T):', 'edel-museum-generator'); ?></strong> <?php _e('Drag arrows to move the object.', 'edel-museum-generator'); ?></li>
+                            <li><strong><?php _e('Rotate (R):', 'edel-museum-generator'); ?></strong> <?php _e('Drag the circle or use the slider to rotate.', 'edel-museum-generator'); ?></li>
+                            <li><strong><?php _e('Scale:', 'edel-museum-generator'); ?></strong> <?php _e('Use the slider to resize (0.1x to 3.0x).', 'edel-museum-generator'); ?></li>
                         </ul>
                     </li>
-                    <li>Click <strong>"Save Layout"</strong> to apply changes.</li>
+                    <li><?php _e('Click <strong>"Save Layout"</strong> to apply changes.', 'edel-museum-generator'); ?></li>
                 </ol>
 
                 <h2 style="border-bottom: 2px solid #2271b1; padding-bottom: 10px; margin-bottom: 20px; margin-top: 40px;">
                     <span class="dashicons dashicons-shortcode" style="font-size:24px;width:24px;height:24px;margin-right:5px;"></span>
-                    Step 4: Display on Site
+                    <?php _e('Step 4: Display on Site', 'edel-museum-generator'); ?>
                 </h2>
-                <p>You can copy the shortcode from the "Exhibition Settings" list or the edit screen.</p>
+                <p><?php _e('Embed the museum on any page using a shortcode.', 'edel-museum-generator'); ?></p>
                 <code style="background: #e5e5e5; padding: 10px; display: block; margin: 10px 0; font-size: 16px;">
                     [edel_museum id="123"]
                 </code>
+                <p><?php _e('Replace <strong>123</strong> with your Exhibition ID (found in the URL when editing the exhibition).', 'edel-museum-generator'); ?></p>
 
                 <hr style="margin: 40px 0;">
                 <p style="text-align: right; color: #888;">
-                    Edel Museum Generator Pro v<?php echo EDEL_MUSEUM_PRO_VERSION; ?>
+                    Edel Museum Generator Pro v<?php echo EDEL_MUSEUM_GENERATOR_PRO_VERSION; ?>
                 </p>
             </div>
         </div>
@@ -131,7 +133,6 @@ class EdelMuseumGeneratorAdminPro {
         wp_enqueue_media();
     }
 
-    // --- ★追加: ショートコードカラム ---
     public function add_shortcode_column_head($columns) {
         $new_columns = array();
         foreach ($columns as $key => $value) {
@@ -151,7 +152,6 @@ class EdelMuseumGeneratorAdminPro {
         }
     }
 
-    // --- ★追加: 編集画面タイトル下 ---
     public function render_shortcode_after_title($post) {
         if ($post->post_type !== 'edel_exhibition') return;
         if ($post->post_status === 'auto-draft') {
@@ -171,7 +171,6 @@ class EdelMuseumGeneratorAdminPro {
         <?php
     }
 
-    // --- ★追加: コピーJS ---
     public function print_admin_scripts() {
         $screen = get_current_screen();
         if ($screen && $screen->post_type === 'edel_exhibition') {
@@ -203,7 +202,7 @@ class EdelMuseumGeneratorAdminPro {
                             $btn.next('#edel-copy-msg').fadeIn().delay(1000).fadeOut();
                         } else {
                             var originalText = $btn.html();
-                            $btn.text('Copied!');
+                            $btn.text('<?php echo esc_js(__('Copied!', 'edel-museum-generator')); ?>');
                             setTimeout(function() {
                                 $btn.html(originalText);
                             }, 1500);
@@ -303,9 +302,9 @@ class EdelMuseumGeneratorAdminPro {
                         return;
                     }
                     frame = wp.media({
-                        title: 'Select 3D Model (.glb)',
+                        title: '<?php echo esc_js(__('Select 3D Model (.glb)', 'edel-museum-generator')); ?>',
                         button: {
-                            text: 'Use this model'
+                            text: '<?php echo esc_js(__('Use this model', 'edel-museum-generator')); ?>'
                         },
                         multiple: false,
                         library: {
@@ -542,15 +541,15 @@ class EdelMuseumGeneratorAdminPro {
         <table class="edel-meta-table">
             <?php
             $textures = array(
-                'floor_img' => 'Floor',
-                'wall_img' => 'Wall',
-                'pillar_img' => 'Pillar',
-                'ceiling_img' => 'Ceiling'
+                'floor_img' => __('Floor', 'edel-museum-generator'),
+                'wall_img' => __('Wall', 'edel-museum-generator'),
+                'pillar_img' => __('Pillar', 'edel-museum-generator'),
+                'ceiling_img' => __('Ceiling', 'edel-museum-generator')
             );
             foreach ($textures as $key => $label):
             ?>
                 <tr>
-                    <th><?php _e($label, 'edel-museum-generator'); ?></th>
+                    <th><?php echo esc_html($label); ?></th>
                     <td>
                         <div style="display:flex;">
                             <input type="text" id="edel_room_<?php echo $key; ?>" name="edel_room[<?php echo $key; ?>]" value="<?php echo esc_attr($meta[$key]); ?>">
@@ -585,9 +584,12 @@ class EdelMuseumGeneratorAdminPro {
 
         <div class="edel-section-title"><?php _e('Wall Placement (Images)', 'edel-museum-generator'); ?></div>
         <table class="edel-meta-table">
-            <?php foreach (array('north' => 'North Wall', 'south' => 'South Wall', 'east' => 'East Wall', 'west' => 'West Wall') as $key => $label): ?>
+            <?php
+            $walls = array('north' => __('North Wall', 'edel-museum-generator'), 'south' => __('South Wall', 'edel-museum-generator'), 'east' => __('East Wall', 'edel-museum-generator'), 'west' => __('West Wall', 'edel-museum-generator'));
+            foreach ($walls as $key => $label):
+            ?>
                 <tr>
-                    <th><?php _e($label, 'edel-museum-generator'); ?></th>
+                    <th><?php echo esc_html($label); ?></th>
                     <td>
                         <div style="display:flex;">
                             <input type="text" id="edel_room_<?php echo $key; ?>" class="edel-placement-input" name="edel_room[<?php echo $key; ?>]" value="<?php echo esc_attr($meta[$key]); ?>">
@@ -602,21 +604,21 @@ class EdelMuseumGeneratorAdminPro {
         <table class="edel-meta-table">
             <?php
             $pillar_keys = array(
-                'p1_north' => 'Pillar 1 North',
-                'p1_south' => 'Pillar 1 South',
-                'p1_east' => 'Pillar 1 East',
-                'p1_west' => 'Pillar 1 West',
-                'p2_north' => 'Pillar 2 North',
-                'p2_south' => 'Pillar 2 South',
-                'p2_east' => 'Pillar 2 East',
-                'p2_west' => 'Pillar 2 West'
+                'p1_north' => __('Pillar 1 North', 'edel-museum-generator'),
+                'p1_south' => __('Pillar 1 South', 'edel-museum-generator'),
+                'p1_east' => __('Pillar 1 East', 'edel-museum-generator'),
+                'p1_west' => __('Pillar 1 West', 'edel-museum-generator'),
+                'p2_north' => __('Pillar 2 North', 'edel-museum-generator'),
+                'p2_south' => __('Pillar 2 South', 'edel-museum-generator'),
+                'p2_east' => __('Pillar 2 East', 'edel-museum-generator'),
+                'p2_west' => __('Pillar 2 West', 'edel-museum-generator')
             );
             $i = 0;
             foreach ($pillar_keys as $key => $label):
                 if ($i === 4) echo '<tr><td colspan="2" style="background:#fafafa;"></td></tr>';
             ?>
                 <tr>
-                    <th><?php _e($label, 'edel-museum-generator'); ?></th>
+                    <th><?php echo esc_html($label); ?></th>
                     <td>
                         <div style="display:flex;">
                             <input type="text" id="edel_room_<?php echo $key; ?>" class="edel-placement-input" name="edel_room[<?php echo $key; ?>]" value="<?php echo esc_attr($meta[$key]); ?>">
@@ -652,7 +654,7 @@ class EdelMuseumGeneratorAdminPro {
                             </div>
                         <?php endforeach;
                     else: ?>
-                        <p style="padding:20px;">No artworks found.</p>
+                        <p style="padding:20px;"><?php _e('No artworks found.', 'edel-museum-generator'); ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -673,9 +675,9 @@ class EdelMuseumGeneratorAdminPro {
                     }
 
                     textureFrame = wp.media({
-                        title: 'Select Texture Image',
+                        title: '<?php echo esc_js(__('Select Texture Image', 'edel-museum-generator')); ?>',
                         button: {
-                            text: 'Use this image'
+                            text: '<?php echo esc_js(__('Use this image', 'edel-museum-generator')); ?>'
                         },
                         multiple: false,
                         library: {
@@ -722,9 +724,9 @@ class EdelMuseumGeneratorAdminPro {
 
                     var isFreeSpace = (targetInputId === 'edel_room_free');
                     if (isFreeSpace) {
-                        $title.text('Select 3D Objects (Free Space)');
+                        $title.text('<?php echo esc_js(__('Select 3D Objects (Free Space)', 'edel-museum-generator')); ?>');
                     } else {
-                        $title.text('Select 2D Artworks (Wall)');
+                        $title.text('<?php echo esc_js(__('Select 2D Artworks (Wall)', 'edel-museum-generator')); ?>');
                     }
 
                     $('.edel-art-item').each(function() {
@@ -968,7 +970,7 @@ class EdelMuseumGeneratorAdminPro {
 
     public function ajax_save_layout() {
         if (!current_user_can('edit_posts')) wp_send_json_error(array('message' => __('Permission denied', 'edel-museum-generator')));
-        check_ajax_referer(EDEL_MUSEUM_PRO_SLUG, '_nonce');
+        check_ajax_referer(EDEL_MUSEUM_GENERATOR_PRO_SLUG, '_nonce');
 
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
         $layout  = isset($_POST['layout'])  ? wp_unslash($_POST['layout']) : '';
@@ -981,7 +983,7 @@ class EdelMuseumGeneratorAdminPro {
 
     public function ajax_clear_layout() {
         if (!current_user_can('edit_posts')) wp_send_json_error(array('message' => __('Permission denied', 'edel-museum-generator')));
-        check_ajax_referer(EDEL_MUSEUM_PRO_SLUG, '_nonce');
+        check_ajax_referer(EDEL_MUSEUM_GENERATOR_PRO_SLUG, '_nonce');
 
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
         if (!$post_id) wp_send_json_error(array('message' => __('Missing data', 'edel-museum-generator')));

@@ -63,13 +63,17 @@ jQuery(document).ready(function ($) {
             })
             .appendTo($loadingBarContainer);
 
-        var $loadingText = $('<div>').css({ marginTop: '8px', fontSize: '12px', color: '#888' }).text('Loading... 0%').appendTo($loadingScreen);
+        // ★修正: 多言語対応 (edel_vars.txt_loading)
+        var $loadingText = $('<div>')
+            .css({ marginTop: '8px', fontSize: '12px', color: '#888' })
+            .text(edel_vars.txt_loading + ' 0%')
+            .appendTo($loadingScreen);
 
         const manager = new THREE.LoadingManager();
         manager.onProgress = function (url, itemsLoaded, itemsTotal) {
             const percent = itemsTotal > 0 ? Math.round((itemsLoaded / itemsTotal) * 100) : 100;
             $loadingBar.css('width', percent + '%');
-            $loadingText.text('Loading... ' + percent + '%');
+            $loadingText.text(edel_vars.txt_loading + ' ' + percent + '%');
         };
         manager.onLoad = function () {
             console.log('Loading Complete.');
@@ -82,7 +86,7 @@ jQuery(document).ready(function ($) {
             if ($loadingScreen.is(':visible')) $loadingScreen.fadeOut(500);
         }, 5000);
 
-        // UI Elements
+        // UI
         var $crosshair = $container.find('#ai-crosshair');
         var $modalOverlay = $container.find('#ai-modal-overlay');
         var $modalClose = $container.find('#ai-modal-close');
@@ -190,6 +194,7 @@ jQuery(document).ready(function ($) {
             })
             .appendTo($container);
 
+        // ★修正: 多言語対応
         var $helpContent = $('<div>')
             .css({
                 background: 'rgba(0, 0, 0, 0.6)',
@@ -200,11 +205,22 @@ jQuery(document).ready(function ($) {
                 backdropFilter: 'blur(2px)'
             })
             .html(
-                '<strong style="border-bottom:1px solid #999; color:#fff; display:block; margin-bottom:5px;">Controls</strong>' +
-                    '<span style="color:#ccc">Move:</span> W, A, S, D<br>' +
-                    '<span style="color:#ccc">Height:</span> E (Up), Q (Down)<br>' +
-                    '<span style="color:#ccc">Look:</span> Mouse<br>' +
-                    '<span style="color:#ccc">Cursor:</span> ESC (Back / Unlock)'
+                '<strong style="border-bottom:1px solid #999; color:#fff; display:block; margin-bottom:5px;">' +
+                    edel_vars.txt_controls_title +
+                    '</strong>' +
+                    '<span style="color:#ccc">' +
+                    edel_vars.txt_move +
+                    '</span> W, A, S, D<br>' +
+                    '<span style="color:#ccc">' +
+                    edel_vars.txt_height +
+                    '</span> E (Up), Q (Down)<br>' +
+                    '<span style="color:#ccc">' +
+                    edel_vars.txt_look +
+                    '</span> Mouse<br>' +
+                    '<span style="color:#ccc">' +
+                    edel_vars.txt_cursor +
+                    '</span> ' +
+                    edel_vars.txt_esc_desc
             )
             .appendTo($helpContainer);
 
@@ -224,18 +240,18 @@ jQuery(document).ready(function ($) {
             })
             .appendTo($helpContainer);
 
-        // ★修正: HelpとSettings両方をトグル
+        // ★修正: HelpとUIコンテナ両方をトグル
         $helpBtn.on('click', function (e) {
             e.stopPropagation();
-            $helpContent.slideToggle(200); // ヘルプ
-            if ($uiContainer) $uiContainer.fadeToggle(200); // 設定スライダー
+            $helpContent.slideToggle(200);
+            if ($uiContainer) $uiContainer.fadeToggle(200);
         });
 
         $helpContainer.on('mousedown click', function (e) {
             e.stopPropagation();
         });
 
-        // --- Settings UI Controls ---
+        // --- Settings UI (Controls) ---
         var $uiContainer = $('<div>')
             .css({
                 position: 'absolute',
@@ -254,22 +270,27 @@ jQuery(document).ready(function ($) {
                 fontSize: '12px'
             })
             .appendTo($container);
+
         var $roomGroup = $('<div>').css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', width: '200px' });
-        $roomGroup.append($('<span>').text('Room').css({ width: '70px', textAlign: 'right' }));
+        // ★修正: 多言語対応
+        $roomGroup.append($('<span>').text(edel_vars.txt_room).css({ width: '70px', textAlign: 'right' }));
         var $roomSlider = $('<input>', { type: 'range', min: 0, max: 2.5, step: 0.1, value: defaultRoomBrightness }).css({
             flex: 1,
             cursor: 'pointer'
         });
         $roomGroup.append($roomSlider);
         $uiContainer.append($roomGroup);
+
         var $spotGroup = $('<div>').css({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', width: '200px' });
-        $spotGroup.append($('<span>').text('Spotlight').css({ width: '70px', textAlign: 'right' }));
+        // ★修正: 多言語対応
+        $spotGroup.append($('<span>').text(edel_vars.txt_spotlight).css({ width: '70px', textAlign: 'right' }));
         var $spotSlider = $('<input>', { type: 'range', min: 0, max: 2.5, step: 0.1, value: defaultSpotBrightness }).css({
             flex: 1,
             cursor: 'pointer'
         });
         $spotGroup.append($spotSlider);
         $uiContainer.append($spotGroup);
+
         var updateRoomLights = function (val) {
             roomLights.forEach((l) => (l.intensity = l.userData.baseIntensity * val));
         };
@@ -327,6 +348,8 @@ jQuery(document).ready(function ($) {
             else $modalImage.show();
             $modalTitle.text(data.title || 'No Title');
             $modalDesc.text(data.desc || '');
+            // ★修正: 多言語対応
+            $modalLink.text(edel_vars.txt_view_details);
             if (data.link) {
                 $modalLink.attr('href', data.link).show();
             } else {
@@ -565,7 +588,7 @@ jQuery(document).ready(function ($) {
         reflectionIntensity,
         manager
     ) {
-        // ... (変更なし) ...
+        // ... (省略) ...
         const styles = { gallery: { wallColor: 0xffffff, bgColor: 0x202020 } };
         const s = styles.gallery;
         scene.background = new THREE.Color(s.bgColor);
@@ -671,6 +694,7 @@ jQuery(document).ready(function ($) {
     }
 
     function addArtworkPlane(scene, art, roomW, roomH, roomD, artLights, initialBrightness, interactableObjects, manager) {
+        // ... (変更なし) ...
         let x = art.x;
         let y = art.y;
         let z = art.z;
@@ -787,6 +811,7 @@ jQuery(document).ready(function ($) {
     }
 
     function addSpotlight(scene, targetMesh, direction, isPillar, artLights, initialBrightness) {
+        // ... (変更なし) ...
         const geo = targetMesh.geometry;
         let artWidth = 1;
         let artHeight = 1;

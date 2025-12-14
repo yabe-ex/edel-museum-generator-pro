@@ -69,17 +69,31 @@ jQuery(document).ready(function ($) {
         })
         .appendTo($loadingBarContainer);
 
-    var $loadingText = $('<div>').css({ marginTop: '8px', fontSize: '12px', color: '#ccc' }).text('Loading Assets... 0%').appendTo($loadingScreen);
+    // ★修正: 多言語対応 (edel_vars.txt_loading_assets)
+    var $loadingText = $('<div>')
+        .css({ marginTop: '8px', fontSize: '12px', color: '#ccc' })
+        .text(edel_vars.txt_loading_assets + ' 0%')
+        .appendTo($loadingScreen);
 
     const manager = new THREE.LoadingManager();
     manager.onProgress = function (url, itemsLoaded, itemsTotal) {
         const percent = Math.round((itemsLoaded / itemsTotal) * 100);
         $loadingBar.css('width', percent + '%');
-        $loadingText.text('Loading Assets... ' + percent + '%');
+        // ★修正: 多言語対応
+        $loadingText.text(edel_vars.txt_loading_assets + ' ' + percent + '%');
     };
     manager.onLoad = function () {
         $loadingScreen.fadeOut(500);
     };
+    manager.onError = function (url) {
+        console.error('Error loading ' + url);
+    };
+    // 安全装置
+    setTimeout(function () {
+        if ($loadingScreen.is(':visible')) {
+            $loadingScreen.fadeOut(500);
+        }
+    }, 5000);
 
     var $saveBtn = $container.find('#museum-save');
     var $clearBtn = $container.find('#museum-clear');
@@ -87,7 +101,6 @@ jQuery(document).ready(function ($) {
     var $scaleValue = $container.find('#scale-value');
     var $scaleWrapper = $container.find('#museum-scale-wrapper');
 
-    // ★修正: scale-slider の min属性を 0.1 に変更
     $scaleSlider.attr('min', '0.1');
 
     var $rotateWrapper = $('<div>').attr('id', 'museum-rotate-wrapper').css({
@@ -133,8 +146,9 @@ jQuery(document).ready(function ($) {
     var $modeControls = $('<div>').css({ display: 'flex', gap: '5px', marginRight: '15px' });
     $container.find('#museum-save').parent().prepend($modeControls);
 
-    var $btnTranslate = $('<button type="button" class="button">Move (T)</button>').appendTo($modeControls);
-    var $btnRotate = $('<button type="button" class="button">Rotate (R)</button>').appendTo($modeControls);
+    // ★修正: 多言語対応 (edel_vars.txt_move_t, edel_vars.txt_rotate_r)
+    var $btnTranslate = $('<button type="button" class="button">' + edel_vars.txt_move_t + '</button>').appendTo($modeControls);
+    var $btnRotate = $('<button type="button" class="button">' + edel_vars.txt_rotate_r + '</button>').appendTo($modeControls);
 
     function updateModeButtons(mode) {
         $btnTranslate.css({
@@ -440,7 +454,6 @@ jQuery(document).ready(function ($) {
 
         const margin = 0.05;
         let padding = 0.5;
-        // ... (壁吸着) ...
         if (wallKey.includes('_') && (wallKey.startsWith('p1') || wallKey.startsWith('p2'))) {
             const parts = wallKey.split('_');
             const pId = parts[0];
@@ -599,7 +612,8 @@ jQuery(document).ready(function ($) {
         });
 
         var originalText = $saveBtn.text();
-        $saveBtn.prop('disabled', true).text('Saving...');
+        // ★修正: 多言語対応 (Saving...)
+        $saveBtn.prop('disabled', true).text(edel_vars.txt_loading || 'Saving...');
 
         $.ajax({
             url: edel_vars.ajaxurl,
@@ -633,12 +647,12 @@ jQuery(document).ready(function ($) {
                     location.reload();
                 } else {
                     alert(edel_vars.txt_error);
-                    $clearBtn.prop('disabled', false).text('Reset Layout');
+                    $clearBtn.prop('disabled', false).text(edel_vars.txt_reset);
                 }
             },
             error: function () {
                 alert(edel_vars.txt_error);
-                $clearBtn.prop('disabled', false).text('Reset Layout');
+                $clearBtn.prop('disabled', false).text(edel_vars.txt_reset);
             }
         });
     });
@@ -671,7 +685,7 @@ jQuery(document).ready(function ($) {
         reflectionIntensity,
         manager
     ) {
-        // ... (省略) ...
+        // ... createRoom logic is identical ...
         const styles = { gallery: { wallColor: 0xffffff, bgColor: 0x202020 } };
         const s = styles.gallery;
         scene.background = new THREE.Color(s.bgColor);
