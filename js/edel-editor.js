@@ -69,7 +69,6 @@ jQuery(document).ready(function ($) {
         })
         .appendTo($loadingBarContainer);
 
-    // ★修正: 多言語対応 (edel_vars.txt_loading_assets)
     var $loadingText = $('<div>')
         .css({ marginTop: '8px', fontSize: '12px', color: '#ccc' })
         .text(edel_vars.txt_loading_assets + ' 0%')
@@ -79,7 +78,6 @@ jQuery(document).ready(function ($) {
     manager.onProgress = function (url, itemsLoaded, itemsTotal) {
         const percent = Math.round((itemsLoaded / itemsTotal) * 100);
         $loadingBar.css('width', percent + '%');
-        // ★修正: 多言語対応
         $loadingText.text(edel_vars.txt_loading_assets + ' ' + percent + '%');
     };
     manager.onLoad = function () {
@@ -88,7 +86,6 @@ jQuery(document).ready(function ($) {
     manager.onError = function (url) {
         console.error('Error loading ' + url);
     };
-    // 安全装置
     setTimeout(function () {
         if ($loadingScreen.is(':visible')) {
             $loadingScreen.fadeOut(500);
@@ -146,7 +143,6 @@ jQuery(document).ready(function ($) {
     var $modeControls = $('<div>').css({ display: 'flex', gap: '5px', marginRight: '15px' });
     $container.find('#museum-save').parent().prepend($modeControls);
 
-    // ★修正: 多言語対応 (edel_vars.txt_move_t, edel_vars.txt_rotate_r)
     var $btnTranslate = $('<button type="button" class="button">' + edel_vars.txt_move_t + '</button>').appendTo($modeControls);
     var $btnRotate = $('<button type="button" class="button">' + edel_vars.txt_rotate_r + '</button>').appendTo($modeControls);
 
@@ -164,13 +160,16 @@ jQuery(document).ready(function ($) {
     }
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x333333);
+    // 背景色を明るいグレーに設定
+    scene.background = new THREE.Color(0xaaaaaa);
 
     const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
     camera.position.set(0, 8, 18);
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setSize(width, height);
+    // ガンマ補正を有効化
+    renderer.outputEncoding = THREE.sRGBEncoding;
 
     const orbit = new THREE.OrbitControls(camera, renderer.domElement);
     orbit.enableDamping = true;
@@ -235,7 +234,8 @@ jQuery(document).ready(function ($) {
     const reflectionIntensity = parseFloat(room.reflection_intensity) || 0.3;
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.1));
-    const roomAmbient = new THREE.AmbientLight(0xffffff, 0.6 * roomBright);
+    // 環境光を強めて影を明るくする
+    const roomAmbient = new THREE.AmbientLight(0xffffff, 0.75 * roomBright);
     scene.add(roomAmbient);
     const dir1 = new THREE.DirectionalLight(0xffffff, 0.6 * roomBright);
     dir1.position.set(5, 10, 7);
@@ -244,7 +244,8 @@ jQuery(document).ready(function ($) {
     dir2.position.set(-5, 5, -5);
     scene.add(dir2);
 
-    scene.fog = new THREE.FogExp2(0x333333, 0.05);
+    // フォグを薄く、明るい色にする
+    scene.fog = new THREE.FogExp2(0xaaaaaa, 0.015);
 
     createRoom(
         scene,
@@ -406,6 +407,8 @@ jQuery(document).ready(function ($) {
             const material = new THREE.MeshBasicMaterial({ map: null, side: THREE.DoubleSide });
             const plane = new THREE.Mesh(initialGeo, material);
             loader.load(art.image, (texture) => {
+                // テクスチャエンコーディング設定
+                texture.encoding = THREE.sRGBEncoding;
                 plane.material.map = texture;
                 plane.material.needsUpdate = true;
                 const img = texture.image;
@@ -612,7 +615,6 @@ jQuery(document).ready(function ($) {
         });
 
         var originalText = $saveBtn.text();
-        // ★修正: 多言語対応 (Saving...)
         $saveBtn.prop('disabled', true).text(edel_vars.txt_loading || 'Saving...');
 
         $.ajax({
@@ -685,8 +687,7 @@ jQuery(document).ready(function ($) {
         reflectionIntensity,
         manager
     ) {
-        // ... createRoom logic is identical ...
-        const styles = { gallery: { wallColor: 0xffffff, bgColor: 0x202020 } };
+        const styles = { gallery: { wallColor: 0xffffff, bgColor: 0xaaaaaa } }; // 明るい背景
         const s = styles.gallery;
         scene.background = new THREE.Color(s.bgColor);
 
@@ -694,10 +695,12 @@ jQuery(document).ready(function ($) {
         if (wallUrl) {
             const loader = new THREE.TextureLoader(manager);
             const wallTex = loader.load(wallUrl);
+            wallTex.encoding = THREE.sRGBEncoding; // エンコーディング
             wallTex.wrapS = THREE.RepeatWrapping;
             wallTex.wrapT = THREE.RepeatWrapping;
             wallTex.repeat.set(width / 4, height / 4);
-            wallMaterial = new THREE.MeshStandardMaterial({ map: wallTex, side: THREE.BackSide, roughness: 0.8 });
+            // 白色のベースカラー設定
+            wallMaterial = new THREE.MeshStandardMaterial({ map: wallTex, color: 0xffffff, side: THREE.BackSide, roughness: 0.8 });
         } else {
             wallMaterial = new THREE.MeshStandardMaterial({ color: s.wallColor, side: THREE.BackSide, roughness: 0.9 });
         }
@@ -706,13 +709,14 @@ jQuery(document).ready(function ($) {
 
         const floorGeo = new THREE.PlaneGeometry(width, depth);
         if (useReflection && typeof THREE.Reflector !== 'undefined') {
-            const reflector = new THREE.Reflector(floorGeo, { clipBias: 0.003, textureWidth: 512, textureHeight: 512, color: 0x444444 });
+            const reflector = new THREE.Reflector(floorGeo, { clipBias: 0.003, textureWidth: 512, textureHeight: 512, color: 0x666666 });
             reflector.rotation.x = -Math.PI / 2;
             reflector.position.y = -height / 2 - 0.1;
             scene.add(reflector);
             if (floorUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const floorTex = loader.load(floorUrl);
+                floorTex.encoding = THREE.sRGBEncoding; // エンコーディング
                 floorTex.wrapS = THREE.RepeatWrapping;
                 floorTex.wrapT = THREE.RepeatWrapping;
                 floorTex.repeat.set(width / 2, depth / 2);
@@ -737,10 +741,11 @@ jQuery(document).ready(function ($) {
             if (floorUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const floorTex = loader.load(floorUrl);
+                floorTex.encoding = THREE.sRGBEncoding; // エンコーディング
                 floorTex.wrapS = THREE.RepeatWrapping;
                 floorTex.wrapT = THREE.RepeatWrapping;
                 floorTex.repeat.set(width / 2, depth / 2);
-                floorMaterial = new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.8, metalness: 0.1 });
+                floorMaterial = new THREE.MeshStandardMaterial({ map: floorTex, color: 0xffffff, roughness: 0.8, metalness: 0.1 });
             } else {
                 floorMaterial = new THREE.MeshStandardMaterial({ color: 0x999999, roughness: 0.8, metalness: 0.1 });
             }
@@ -754,10 +759,11 @@ jQuery(document).ready(function ($) {
         if (ceilingUrl) {
             const loader = new THREE.TextureLoader(manager);
             const ceilTex = loader.load(ceilingUrl);
+            ceilTex.encoding = THREE.sRGBEncoding; // エンコーディング
             ceilTex.wrapS = THREE.RepeatWrapping;
             ceilTex.wrapT = THREE.RepeatWrapping;
             ceilTex.repeat.set(width / 2, depth / 2);
-            ceilingMaterial = new THREE.MeshStandardMaterial({ map: ceilTex, side: THREE.FrontSide, roughness: 0.9 });
+            ceilingMaterial = new THREE.MeshStandardMaterial({ map: ceilTex, color: 0xffffff, side: THREE.FrontSide, roughness: 0.9 });
         } else {
             ceilingMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.FrontSide, roughness: 0.9 });
         }
@@ -772,10 +778,11 @@ jQuery(document).ready(function ($) {
             if (pillarUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const pTex = loader.load(pillarUrl);
+                pTex.encoding = THREE.sRGBEncoding; // エンコーディング
                 pTex.wrapS = THREE.RepeatWrapping;
                 pTex.wrapT = THREE.RepeatWrapping;
                 pTex.repeat.set(1, height / 2);
-                pillarMat = new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.8 });
+                pillarMat = new THREE.MeshStandardMaterial({ map: pTex, color: 0xffffff, roughness: 0.8 });
             } else {
                 pillarMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
             }
