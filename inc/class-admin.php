@@ -15,8 +15,13 @@ class EdelMuseumGeneratorAdminPro {
 
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
-        // ヘルプメニューの登録
         add_action('admin_menu', array($this, 'add_help_menu'));
+
+        // ★追加: ショートコード機能
+        add_filter('manage_edel_exhibition_posts_columns', array($this, 'add_shortcode_column_head'));
+        add_action('manage_edel_exhibition_posts_custom_column', array($this, 'add_shortcode_column_content'), 10, 2);
+        add_action('edit_form_after_title', array($this, 'render_shortcode_after_title'));
+        add_action('admin_footer', array($this, 'print_admin_scripts'));
     }
 
     public function add_help_menu() {
@@ -108,11 +113,10 @@ class EdelMuseumGeneratorAdminPro {
                     <span class="dashicons dashicons-shortcode" style="font-size:24px;width:24px;height:24px;margin-right:5px;"></span>
                     Step 4: Display on Site
                 </h2>
-                <p>Embed the museum on any page using a shortcode.</p>
+                <p>You can copy the shortcode from the "Exhibition Settings" list or the edit screen.</p>
                 <code style="background: #e5e5e5; padding: 10px; display: block; margin: 10px 0; font-size: 16px;">
                     [edel_museum id="123"]
                 </code>
-                <p>Replace <strong>123</strong> with your Exhibition ID (found in the URL when editing the exhibition).</p>
 
                 <hr style="margin: 40px 0;">
                 <p style="text-align: right; color: #888;">
@@ -125,6 +129,90 @@ class EdelMuseumGeneratorAdminPro {
 
     public function enqueue_admin_scripts() {
         wp_enqueue_media();
+    }
+
+    // --- ★追加: ショートコードカラム ---
+    public function add_shortcode_column_head($columns) {
+        $new_columns = array();
+        foreach ($columns as $key => $value) {
+            if ($key === 'date') $new_columns['shortcode'] = __('Shortcode', 'edel-museum-generator');
+            $new_columns[$key] = $value;
+        }
+        return $new_columns;
+    }
+
+    public function add_shortcode_column_content($column_name, $post_id) {
+        if ($column_name == 'shortcode') {
+            $shortcode = '[edel_museum id="' . $post_id . '"]';
+            echo '<div style="display:flex; align-items:center; gap:5px;">';
+            echo '<input type="text" value="' . esc_attr($shortcode) . '" readonly style="width:160px; background:#f0f0f1; border:1px solid #ccc; font-size:12px; padding:2px 5px;" onclick="this.select();">';
+            echo '<button type="button" class="button button-small edel-copy-btn" data-code="' . esc_attr($shortcode) . '"><span class="dashicons dashicons-admin-page" style="line-height:26px; font-size:14px;"></span></button>';
+            echo '</div>';
+        }
+    }
+
+    // --- ★追加: 編集画面タイトル下 ---
+    public function render_shortcode_after_title($post) {
+        if ($post->post_type !== 'edel_exhibition') return;
+        if ($post->post_status === 'auto-draft') {
+            echo '<div style="margin-top:10px; color:#666;">' . __('Save draft to generate shortcode.', 'edel-museum-generator') . '</div>';
+            return;
+        }
+        $shortcode = '[edel_museum id="' . $post->ID . '"]';
+    ?>
+        <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px; background: #fff; padding: 10px; border: 1px solid #ccd0d4; border-left: 4px solid #2271b1; box-shadow: 0 1px 1px rgba(0,0,0,0.04);">
+            <strong style="font-size:13px;"><?php _e('Shortcode:', 'edel-museum-generator'); ?></strong>
+            <input type="text" id="edel-top-shortcode" value="<?php echo esc_attr($shortcode); ?>" readonly style="background:#f9f9f9; border:1px solid #ddd; width:200px; font-family:monospace;" onclick="this.select();">
+            <button type="button" class="button edel-copy-btn" data-code="<?php echo esc_attr($shortcode); ?>">
+                <?php _e('Copy to Clipboard', 'edel-museum-generator'); ?>
+            </button>
+            <span id="edel-copy-msg" style="color:green; display:none; font-weight:bold; font-size:12px;"><?php _e('Copied!', 'edel-museum-generator'); ?></span>
+        </div>
+        <?php
+    }
+
+    // --- ★追加: コピーJS ---
+    public function print_admin_scripts() {
+        $screen = get_current_screen();
+        if ($screen && $screen->post_type === 'edel_exhibition') {
+        ?>
+            <script>
+                jQuery(document).ready(function($) {
+                    $('.edel-copy-btn').on('click', function(e) {
+                        e.preventDefault();
+                        var code = $(this).data('code');
+                        var $btn = $(this);
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(code).then(function() {
+                                showCopied($btn);
+                            }, function(err) {
+                                alert('Press Ctrl+C to copy');
+                            });
+                        } else {
+                            var $temp = $("<input>");
+                            $("body").append($temp);
+                            $temp.val(code).select();
+                            document.execCommand("copy");
+                            $temp.remove();
+                            showCopied($btn);
+                        }
+                    });
+
+                    function showCopied($btn) {
+                        if ($btn.next('#edel-copy-msg').length) {
+                            $btn.next('#edel-copy-msg').fadeIn().delay(1000).fadeOut();
+                        } else {
+                            var originalText = $btn.html();
+                            $btn.text('Copied!');
+                            setTimeout(function() {
+                                $btn.html(originalText);
+                            }, 1500);
+                        }
+                    }
+                });
+            </script>
+        <?php
+        }
     }
 
     public function allow_glb_uploads($mimes) {
@@ -190,7 +278,7 @@ class EdelMuseumGeneratorAdminPro {
         $sample_1 = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb';
         $sample_2 = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/AntiqueCamera/glTF-Binary/AntiqueCamera.glb';
         $sample_3 = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Binary/Duck.glb';
-    ?>
+        ?>
         <p>
             <label for="edel_art_link"><strong><?php _e('Link URL:', 'edel-museum-generator'); ?></strong></label><br>
             <input type="text" id="edel_art_link" name="edel_art_link" value="<?php echo esc_attr($link); ?>" style="width:100%;" placeholder="https://...">
@@ -317,7 +405,6 @@ class EdelMuseumGeneratorAdminPro {
                 font-weight: bold;
             }
 
-            /* Art Picker Modal Styles */
             #edel-art-picker-modal {
                 display: none;
                 position: fixed;

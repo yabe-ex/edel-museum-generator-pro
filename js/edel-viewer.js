@@ -82,7 +82,7 @@ jQuery(document).ready(function ($) {
             if ($loadingScreen.is(':visible')) $loadingScreen.fadeOut(500);
         }, 5000);
 
-        // UI
+        // UI Elements
         var $crosshair = $container.find('#ai-crosshair');
         var $modalOverlay = $container.find('#ai-modal-overlay');
         var $modalClose = $container.find('#ai-modal-close');
@@ -204,7 +204,6 @@ jQuery(document).ready(function ($) {
                     '<span style="color:#ccc">Move:</span> W, A, S, D<br>' +
                     '<span style="color:#ccc">Height:</span> E (Up), Q (Down)<br>' +
                     '<span style="color:#ccc">Look:</span> Mouse<br>' +
-                    // ★修正: 英語表記 "Back / Unlock"
                     '<span style="color:#ccc">Cursor:</span> ESC (Back / Unlock)'
             )
             .appendTo($helpContainer);
@@ -225,16 +224,18 @@ jQuery(document).ready(function ($) {
             })
             .appendTo($helpContainer);
 
+        // ★修正: HelpとSettings両方をトグル
         $helpBtn.on('click', function (e) {
             e.stopPropagation();
-            $helpContent.slideToggle(200);
+            $helpContent.slideToggle(200); // ヘルプ
+            if ($uiContainer) $uiContainer.fadeToggle(200); // 設定スライダー
         });
 
         $helpContainer.on('mousedown click', function (e) {
             e.stopPropagation();
         });
 
-        // --- Settings UI (省略) ---
+        // --- Settings UI Controls ---
         var $uiContainer = $('<div>')
             .css({
                 position: 'absolute',
@@ -670,7 +671,6 @@ jQuery(document).ready(function ($) {
     }
 
     function addArtworkPlane(scene, art, roomW, roomH, roomD, artLights, initialBrightness, interactableObjects, manager) {
-        // ... (変更なし) ...
         let x = art.x;
         let y = art.y;
         let z = art.z;
@@ -787,7 +787,6 @@ jQuery(document).ready(function ($) {
     }
 
     function addSpotlight(scene, targetMesh, direction, isPillar, artLights, initialBrightness) {
-        // ... (変更なし) ...
         const geo = targetMesh.geometry;
         let artWidth = 1;
         let artHeight = 1;
