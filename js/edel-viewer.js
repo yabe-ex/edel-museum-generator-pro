@@ -75,7 +75,6 @@ jQuery(document).ready(function ($) {
             $loadingText.text(edel_vars.txt_loading + ' ' + percent + '%');
         };
         manager.onLoad = function () {
-            console.log('Loading Complete.');
             $loadingScreen.fadeOut(500);
         };
         manager.onError = function (url) {
@@ -126,14 +125,12 @@ jQuery(document).ready(function ($) {
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
         renderer.setSize(width, height);
         renderer.shadowMap.enabled = true;
-        // ガンマ補正を有効化
         renderer.outputEncoding = THREE.sRGBEncoding;
 
         const baseAmbient = new THREE.AmbientLight(0xffffff, 0.1);
         scene.add(baseAmbient);
 
         const roomLights = [];
-        // 環境光を強化
         const roomAmbient = new THREE.AmbientLight(0xffffff, 0.75);
         roomAmbient.userData.baseIntensity = 0.75;
         scene.add(roomAmbient);
@@ -154,7 +151,6 @@ jQuery(document).ready(function ($) {
 
         const artLights = [];
 
-        // フォグを調整
         scene.fog = new THREE.FogExp2(0xaaaaaa, 0.015);
 
         createRoom(
@@ -542,12 +538,15 @@ jQuery(document).ready(function ($) {
             }
             raycaster.setFromCamera(center, camera);
             raycaster.far = 5.0;
+
+            // ★修正: interactableObjectsを対象にして判定
             const hits = raycaster.intersectObjects(interactableObjects, true);
             if (hits.length > 0) {
                 let target = hits[0].object;
-                while (target && !target.userData.title && target.parent) {
+                while (target.parent && !target.userData.title && target.parent !== scene) {
                     target = target.parent;
                 }
+
                 if (target && target.userData.title) {
                     hoveredObj = target;
                     if (!isTouchDevice()) $crosshair.addClass('hover');
@@ -586,7 +585,7 @@ jQuery(document).ready(function ($) {
         reflectionIntensity,
         manager
     ) {
-        const styles = { gallery: { wallColor: 0xffffff, bgColor: 0xaaaaaa } }; // 明るい背景
+        const styles = { gallery: { wallColor: 0xffffff, bgColor: 0xaaaaaa } };
         const s = styles.gallery;
         scene.background = new THREE.Color(s.bgColor);
 
@@ -594,7 +593,7 @@ jQuery(document).ready(function ($) {
         if (wallUrl) {
             const loader = new THREE.TextureLoader(manager);
             const wallTex = loader.load(wallUrl);
-            wallTex.encoding = THREE.sRGBEncoding; // エンコーディング
+            wallTex.encoding = THREE.sRGBEncoding;
             wallTex.wrapS = THREE.RepeatWrapping;
             wallTex.wrapT = THREE.RepeatWrapping;
             wallTex.repeat.set(width / 4, height / 4);
@@ -614,7 +613,7 @@ jQuery(document).ready(function ($) {
             if (floorUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const floorTex = loader.load(floorUrl);
-                floorTex.encoding = THREE.sRGBEncoding; // エンコーディング
+                floorTex.encoding = THREE.sRGBEncoding;
                 floorTex.wrapS = THREE.RepeatWrapping;
                 floorTex.wrapT = THREE.RepeatWrapping;
                 floorTex.repeat.set(width / 2, depth / 2);
@@ -639,7 +638,7 @@ jQuery(document).ready(function ($) {
             if (floorUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const floorTex = loader.load(floorUrl);
-                floorTex.encoding = THREE.sRGBEncoding; // エンコーディング
+                floorTex.encoding = THREE.sRGBEncoding;
                 floorTex.wrapS = THREE.RepeatWrapping;
                 floorTex.wrapT = THREE.RepeatWrapping;
                 floorTex.repeat.set(width / 2, depth / 2);
@@ -657,7 +656,7 @@ jQuery(document).ready(function ($) {
         if (ceilingUrl) {
             const loader = new THREE.TextureLoader(manager);
             const ceilTex = loader.load(ceilingUrl);
-            ceilTex.encoding = THREE.sRGBEncoding; // エンコーディング
+            ceilTex.encoding = THREE.sRGBEncoding;
             ceilTex.wrapS = THREE.RepeatWrapping;
             ceilTex.wrapT = THREE.RepeatWrapping;
             ceilTex.repeat.set(width / 2, depth / 2);
@@ -676,7 +675,7 @@ jQuery(document).ready(function ($) {
             if (pillarUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const pTex = loader.load(pillarUrl);
-                pTex.encoding = THREE.sRGBEncoding; // エンコーディング
+                pTex.encoding = THREE.sRGBEncoding;
                 pTex.wrapS = THREE.RepeatWrapping;
                 pTex.wrapT = THREE.RepeatWrapping;
                 pTex.repeat.set(1, height / 2);
@@ -781,46 +780,85 @@ jQuery(document).ready(function ($) {
                 wrapper.position.set(x, y, z);
                 wrapper.rotation.set(0, rotY, 0);
 
+                wrapper.userData = { title: art.title, desc: art.desc, link: art.link };
                 scene.add(wrapper);
+                interactableObjects.push(wrapper); // ★修正: GLBもインタラクト対象に追加
             });
         } else if (art.image) {
             const loader = new THREE.TextureLoader(manager);
             loader.load(art.image, (texture) => {
-                texture.encoding = THREE.sRGBEncoding; // エンコーディング
+                texture.encoding = THREE.sRGBEncoding;
                 const img = texture.image;
                 const aspect = img && img.width && img.height ? img.width / img.height : 1.5;
                 const baseHeight = 1.0;
                 const baseWidth = baseHeight * aspect;
+
+                const group = new THREE.Group();
+                group.position.set(x, y, z);
+                group.rotation.y = rotY;
+
                 const geo = new THREE.PlaneGeometry(baseWidth, baseHeight);
                 const mat = new THREE.MeshStandardMaterial({ map: texture });
                 const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.z = 0.025;
+                group.add(mesh);
+
+                const frameType = art.frame || 'wood';
+                if (frameType !== 'none') {
+                    const frameThick = 0.05;
+                    const frameDepth = 0.06;
+                    let frameColor = 0x5c3a21;
+                    let frameRough = 0.8;
+                    if (frameType === 'black') {
+                        frameColor = 0x111111;
+                        frameRough = 0.5;
+                    }
+                    if (frameType === 'white') {
+                        frameColor = 0xffffff;
+                        frameRough = 0.5;
+                    }
+
+                    const frameMat = new THREE.MeshStandardMaterial({ color: frameColor, roughness: frameRough });
+
+                    const topGeo = new THREE.BoxGeometry(baseWidth + frameThick * 2, frameThick, frameDepth);
+                    const topMesh = new THREE.Mesh(topGeo, frameMat);
+                    topMesh.position.y = baseHeight / 2 + frameThick / 2;
+                    group.add(topMesh);
+
+                    const botMesh = topMesh.clone();
+                    botMesh.position.y = -(baseHeight / 2) - frameThick / 2;
+                    group.add(botMesh);
+
+                    const sideGeo = new THREE.BoxGeometry(frameThick, baseHeight, frameDepth);
+                    const leftMesh = new THREE.Mesh(sideGeo, frameMat);
+                    leftMesh.position.x = -(baseWidth / 2) - frameThick / 2;
+                    group.add(leftMesh);
+
+                    const rightMesh = leftMesh.clone();
+                    rightMesh.position.x = baseWidth / 2 + frameThick / 2;
+                    group.add(rightMesh);
+                }
 
                 if (art.scale && typeof art.scale === 'object') {
                     const s = art.scale.x ?? 1;
-                    mesh.scale.set(s, s, 1);
+                    group.scale.set(s, s, s);
                 }
 
-                mesh.position.set(x, y, z);
-                mesh.rotation.y = rotY;
+                group.userData = { title: art.title, desc: art.desc, link: art.link, image: art.image };
 
-                scene.add(mesh);
-                mesh.userData = { title: art.title, desc: art.desc, link: art.link, image: art.image };
-                if (interactableObjects) interactableObjects.push(mesh);
-                addSpotlight(scene, mesh, direction, isPillar, artLights, initialBrightness);
+                scene.add(group);
+                interactableObjects.push(group); // ★インタラクト対象に追加
+                addSpotlight(scene, group, direction, isPillar, artLights, initialBrightness);
             });
         }
     }
 
     function addSpotlight(scene, targetMesh, direction, isPillar, artLights, initialBrightness) {
-        const geo = targetMesh.geometry;
-        let artWidth = 1;
-        let artHeight = 1;
-        if (geo) {
-            const w = geo.parameters ? geo.parameters.width : 1;
-            const h = geo.parameters ? geo.parameters.height : 1;
-            artWidth = w * targetMesh.scale.x;
-            artHeight = h * targetMesh.scale.y;
-        }
+        const box = new THREE.Box3().setFromObject(targetMesh);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const artWidth = size.x;
+        const artHeight = size.y;
 
         const diagonal = Math.sqrt(artWidth * artWidth + artHeight * artHeight);
         const angle = Math.PI / 6;

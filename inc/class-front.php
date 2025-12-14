@@ -154,6 +154,7 @@ class EdelMuseumGeneratorFrontPro {
 
                 $img_url = get_the_post_thumbnail_url($art_id, 'large');
                 $glb_url = get_post_meta($art_id, '_edel_art_glb', true);
+                $frame_type = get_post_meta($art_id, '_edel_art_frame', true) ?: 'wood';
 
                 if (!$img_url && !$glb_url) continue;
 
@@ -204,6 +205,7 @@ class EdelMuseumGeneratorFrontPro {
                     'id'    => $art_id,
                     'image' => $img_url,
                     'glb'   => $glb_url,
+                    'frame' => $frame_type, // ★JSに渡す
                     'title' => $art_post->post_title,
                     'desc'  => wp_strip_all_tags($art_post->post_content),
                     'link'  => get_post_meta($art_id, '_edel_art_link', true),
@@ -253,6 +255,7 @@ class EdelMuseumGeneratorFrontPro {
                             $art['title'] = $p->post_title;
                             $art['desc']  = wp_strip_all_tags($p->post_content);
                             $art['link']  = get_post_meta($art['id'], '_edel_art_link', true);
+                            $art['frame'] = get_post_meta($art['id'], '_edel_art_frame', true) ?: 'wood';
                             $img = get_the_post_thumbnail_url($art['id'], 'large');
                             if ($img) $art['image'] = $img;
                             $glb = get_post_meta($art['id'], '_edel_art_glb', true);

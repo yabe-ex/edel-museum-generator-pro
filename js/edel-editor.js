@@ -160,7 +160,6 @@ jQuery(document).ready(function ($) {
     }
 
     const scene = new THREE.Scene();
-    // 背景色を明るいグレーに設定
     scene.background = new THREE.Color(0xaaaaaa);
 
     const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
@@ -168,7 +167,6 @@ jQuery(document).ready(function ($) {
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     renderer.setSize(width, height);
-    // ガンマ補正を有効化
     renderer.outputEncoding = THREE.sRGBEncoding;
 
     const orbit = new THREE.OrbitControls(camera, renderer.domElement);
@@ -234,7 +232,6 @@ jQuery(document).ready(function ($) {
     const reflectionIntensity = parseFloat(room.reflection_intensity) || 0.3;
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.1));
-    // 環境光を強めて影を明るくする
     const roomAmbient = new THREE.AmbientLight(0xffffff, 0.75 * roomBright);
     scene.add(roomAmbient);
     const dir1 = new THREE.DirectionalLight(0xffffff, 0.6 * roomBright);
@@ -244,7 +241,6 @@ jQuery(document).ready(function ($) {
     dir2.position.set(-5, 5, -5);
     scene.add(dir2);
 
-    // フォグを薄く、明るい色にする
     scene.fog = new THREE.FogExp2(0xaaaaaa, 0.015);
 
     createRoom(
@@ -266,6 +262,108 @@ jQuery(document).ready(function ($) {
     const artworks = [];
     const loader = new THREE.TextureLoader(manager);
     const gltfLoader = new THREE.GLTFLoader(manager);
+
+    function createFramedArtworkGroup(art, idx, manager) {
+        const group = new THREE.Group();
+        group.position.set(art.x, art.y, art.z);
+
+        let rotY = 0;
+        if (art.rotationY !== undefined) {
+            rotY = art.rotationY;
+        } else {
+            const wall = art.wall || 'north';
+            const isPillar = wall.includes('_');
+            let dir = wall;
+            if (isPillar) dir = wall.split('_')[1];
+
+            if (isPillar) {
+                if (dir === 'north') rotY = Math.PI;
+                else if (dir === 'south') rotY = 0;
+                else if (dir === 'east') rotY = Math.PI / 2;
+                else if (dir === 'west') rotY = -Math.PI / 2;
+            } else {
+                if (dir === 'north') rotY = 0;
+                else if (dir === 'south') rotY = Math.PI;
+                else if (dir === 'east') rotY = -Math.PI / 2;
+                else if (dir === 'west') rotY = Math.PI / 2;
+            }
+        }
+        group.rotation.y = rotY;
+
+        group.userData = {
+            isArtwork: true,
+            index: idx,
+            wall: art.wall,
+            baseScale: 1.0
+        };
+
+        const loader = new THREE.TextureLoader(manager);
+        loader.load(art.image, (texture) => {
+            texture.encoding = THREE.sRGBEncoding;
+            const img = texture.image;
+            const aspect = img.width / img.height;
+            const baseH = 1.0;
+            const baseW = baseH * aspect;
+
+            const artGeo = new THREE.PlaneGeometry(baseW, baseH);
+            const artMat = new THREE.MeshStandardMaterial({ map: texture, side: THREE.FrontSide });
+            const artMesh = new THREE.Mesh(artGeo, artMat);
+            artMesh.position.z = 0.025;
+            group.add(artMesh);
+
+            // ★変更: デフォルトを white に
+            const frameType = art.frame || 'white';
+
+            if (frameType !== 'none') {
+                let frameThick = 0.05;
+                let frameDepth = 0.06;
+                let frameColor = 0x5c3a21;
+                let frameRough = 0.8;
+
+                if (frameType === 'black') {
+                    frameColor = 0x111111;
+                    frameRough = 0.5;
+                }
+                if (frameType === 'white') {
+                    frameColor = 0xeeeeee; // 真っ白すぎると立体感が消えるので少しグレーに
+                    frameRough = 0.5;
+                    // ★変更: 白の場合のみ厚みを増やす
+                    frameThick = 0.06;
+                    frameDepth = 0.15; // 奥行きを大幅にアップ
+                }
+
+                const frameMat = new THREE.MeshStandardMaterial({
+                    color: frameColor,
+                    roughness: frameRough
+                });
+
+                const topGeo = new THREE.BoxGeometry(baseW + frameThick * 2, frameThick, frameDepth);
+                const topMesh = new THREE.Mesh(topGeo, frameMat);
+                topMesh.position.y = baseH / 2 + frameThick / 2;
+                group.add(topMesh);
+
+                const botMesh = topMesh.clone();
+                botMesh.position.y = -(baseH / 2) - frameThick / 2;
+                group.add(botMesh);
+
+                const sideGeo = new THREE.BoxGeometry(frameThick, baseH, frameDepth);
+                const leftMesh = new THREE.Mesh(sideGeo, frameMat);
+                leftMesh.position.x = -(baseW / 2) - frameThick / 2;
+                group.add(leftMesh);
+
+                const rightMesh = leftMesh.clone();
+                rightMesh.position.x = baseW / 2 + frameThick / 2;
+                group.add(rightMesh);
+            }
+
+            if (art.scale && typeof art.scale === 'object') {
+                const s = art.scale.x ?? 1;
+                group.scale.set(s, s, s);
+            }
+        });
+
+        return group;
+    }
 
     (layout.artworks || []).forEach((art, idx) => {
         let x = art.x;
@@ -331,52 +429,13 @@ jQuery(document).ready(function ($) {
             }
         }
 
-        const isPillar = wall.includes('_');
-        let direction = wall;
-        if (isPillar) direction = wall.split('_')[1];
-        let rotY = 0;
-        if (isPillar) {
-            switch (direction) {
-                case 'north':
-                    rotY = Math.PI;
-                    break;
-                case 'south':
-                    rotY = 0;
-                    break;
-                case 'east':
-                    rotY = Math.PI / 2;
-                    break;
-                case 'west':
-                    rotY = -Math.PI / 2;
-                    break;
-            }
-        } else {
-            switch (direction) {
-                case 'north':
-                    rotY = 0;
-                    break;
-                case 'south':
-                    rotY = Math.PI;
-                    break;
-                case 'east':
-                    rotY = -Math.PI / 2;
-                    break;
-                case 'west':
-                    rotY = Math.PI / 2;
-                    break;
-            }
-        }
-
-        if (art.rotationY !== undefined) {
-            rotY = art.rotationY;
-        }
-
         if (art.glb) {
             gltfLoader.load(art.glb, (gltf) => {
                 const rawModel = gltf.scene;
                 const box = new THREE.Box3().setFromObject(rawModel);
                 const center = box.getCenter(new THREE.Vector3());
-                const size = box.getSize(new THREE.Vector3());
+                const size = new THREE.Vector3();
+                box.getSize(size);
 
                 rawModel.position.set(-center.x, -box.min.y, -center.z);
 
@@ -395,39 +454,37 @@ jQuery(document).ready(function ($) {
                 }
 
                 wrapper.position.set(x, y, z);
+
+                let rotY = 0;
+                if (art.rotationY !== undefined) {
+                    rotY = art.rotationY;
+                } else {
+                    const isPillar = wall.includes('_');
+                    let dir = wall;
+                    if (isPillar) dir = wall.split('_')[1];
+                    if (isPillar) {
+                        if (dir === 'north') rotY = Math.PI;
+                        else if (dir === 'south') rotY = 0;
+                        else if (dir === 'east') rotY = Math.PI / 2;
+                        else if (dir === 'west') rotY = -Math.PI / 2;
+                    } else {
+                        if (dir === 'north') rotY = 0;
+                        else if (dir === 'south') rotY = Math.PI;
+                        else if (dir === 'east') rotY = -Math.PI / 2;
+                        else if (dir === 'west') rotY = Math.PI / 2;
+                    }
+                }
                 wrapper.rotation.y = rotY;
 
-                wrapper.userData.index = idx;
-                wrapper.userData.wall = wall;
+                wrapper.userData = { isArtwork: true, index: idx, wall: art.wall, baseScale: baseScale };
+
                 artworks.push(wrapper);
                 scene.add(wrapper);
             });
         } else {
-            const initialGeo = new THREE.PlaneGeometry(1, 1);
-            const material = new THREE.MeshBasicMaterial({ map: null, side: THREE.DoubleSide });
-            const plane = new THREE.Mesh(initialGeo, material);
-            loader.load(art.image, (texture) => {
-                // テクスチャエンコーディング設定
-                texture.encoding = THREE.sRGBEncoding;
-                plane.material.map = texture;
-                plane.material.needsUpdate = true;
-                const img = texture.image;
-                const aspect = img.width / img.height;
-                plane.geometry.dispose();
-                plane.geometry = new THREE.PlaneGeometry(aspect, 1.0);
-            });
-
-            plane.position.set(x, y, z);
-            plane.rotation.y = rotY;
-            if (art.scale && typeof art.scale === 'object') {
-                const s = art.scale.x ?? 1;
-                plane.scale.set(s, s, 1);
-            }
-
-            plane.userData.index = idx;
-            plane.userData.wall = wall;
-            artworks.push(plane);
-            scene.add(plane);
+            const group = createFramedArtworkGroup(art, idx, manager);
+            artworks.push(group);
+            scene.add(group);
         }
     });
 
@@ -501,6 +558,7 @@ jQuery(document).ready(function ($) {
         obj.position.y = THREE.MathUtils.clamp(obj.position.y, -limitY, limitY);
     });
 
+    // クリック判定用変数
     let selectedObject = null;
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -513,15 +571,26 @@ jQuery(document).ready(function ($) {
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
         raycaster.setFromCamera(mouse, camera);
-        const hits = raycaster.intersectObjects(artworks, true);
+
+        const hits = raycaster.intersectObjects(scene.children, true);
 
         if (hits.length > 0) {
-            let target = hits[0].object;
-            while (target && !target.userData.wall && target.parent) {
-                target = target.parent;
+            let foundGroup = null;
+            for (let i = 0; i < hits.length; i++) {
+                let target = hits[i].object;
+                if (target.type === 'Line') continue;
+                while (target && target !== scene) {
+                    if (target.userData && target.userData.isArtwork) {
+                        foundGroup = target;
+                        break;
+                    }
+                    target = target.parent;
+                }
+                if (foundGroup) break;
             }
-            if (target && target.userData.wall) {
-                selectArtwork(target);
+
+            if (foundGroup) {
+                selectArtwork(foundGroup);
             } else {
                 deselectArtwork();
             }
@@ -529,6 +598,8 @@ jQuery(document).ready(function ($) {
             deselectArtwork();
         }
     }
+
+    canvas.addEventListener('pointerdown', onPointerDown);
 
     function selectArtwork(obj) {
         selectedObject = obj;
@@ -574,7 +645,6 @@ jQuery(document).ready(function ($) {
         if ($scaleWrapper) $scaleWrapper.hide();
         if ($rotateWrapper) $rotateWrapper.hide();
     }
-    canvas.addEventListener('pointerdown', onPointerDown);
 
     $scaleSlider.on('input', function (e) {
         if (!selectedObject) return;
@@ -602,16 +672,13 @@ jQuery(document).ready(function ($) {
     $saveBtn.on('click', function () {
         if (!postId) return;
         var newLayout = JSON.parse(JSON.stringify(layout));
-        artworks.forEach(function (mesh) {
-            var idx = mesh.userData.index;
-            newLayout.artworks[idx].x = mesh.position.x;
-            newLayout.artworks[idx].y = mesh.position.y;
-            newLayout.artworks[idx].z = mesh.position.z;
-            newLayout.artworks[idx].scale = { x: mesh.scale.x, y: mesh.scale.y, z: mesh.scale.z };
-
-            mesh.rotation.x = 0;
-            mesh.rotation.z = 0;
-            newLayout.artworks[idx].rotationY = mesh.rotation.y;
+        artworks.forEach(function (group) {
+            var idx = group.userData.index;
+            newLayout.artworks[idx].x = group.position.x;
+            newLayout.artworks[idx].y = group.position.y;
+            newLayout.artworks[idx].z = group.position.z;
+            newLayout.artworks[idx].scale = { x: group.scale.x, y: group.scale.y, z: group.scale.z };
+            newLayout.artworks[idx].rotationY = group.rotation.y;
         });
 
         var originalText = $saveBtn.text();
@@ -687,7 +754,7 @@ jQuery(document).ready(function ($) {
         reflectionIntensity,
         manager
     ) {
-        const styles = { gallery: { wallColor: 0xffffff, bgColor: 0xaaaaaa } }; // 明るい背景
+        const styles = { gallery: { wallColor: 0xffffff, bgColor: 0xaaaaaa } };
         const s = styles.gallery;
         scene.background = new THREE.Color(s.bgColor);
 
@@ -695,11 +762,10 @@ jQuery(document).ready(function ($) {
         if (wallUrl) {
             const loader = new THREE.TextureLoader(manager);
             const wallTex = loader.load(wallUrl);
-            wallTex.encoding = THREE.sRGBEncoding; // エンコーディング
+            wallTex.encoding = THREE.sRGBEncoding;
             wallTex.wrapS = THREE.RepeatWrapping;
             wallTex.wrapT = THREE.RepeatWrapping;
             wallTex.repeat.set(width / 4, height / 4);
-            // 白色のベースカラー設定
             wallMaterial = new THREE.MeshStandardMaterial({ map: wallTex, color: 0xffffff, side: THREE.BackSide, roughness: 0.8 });
         } else {
             wallMaterial = new THREE.MeshStandardMaterial({ color: s.wallColor, side: THREE.BackSide, roughness: 0.9 });
@@ -716,7 +782,7 @@ jQuery(document).ready(function ($) {
             if (floorUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const floorTex = loader.load(floorUrl);
-                floorTex.encoding = THREE.sRGBEncoding; // エンコーディング
+                floorTex.encoding = THREE.sRGBEncoding;
                 floorTex.wrapS = THREE.RepeatWrapping;
                 floorTex.wrapT = THREE.RepeatWrapping;
                 floorTex.repeat.set(width / 2, depth / 2);
@@ -741,7 +807,7 @@ jQuery(document).ready(function ($) {
             if (floorUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const floorTex = loader.load(floorUrl);
-                floorTex.encoding = THREE.sRGBEncoding; // エンコーディング
+                floorTex.encoding = THREE.sRGBEncoding;
                 floorTex.wrapS = THREE.RepeatWrapping;
                 floorTex.wrapT = THREE.RepeatWrapping;
                 floorTex.repeat.set(width / 2, depth / 2);
@@ -759,7 +825,7 @@ jQuery(document).ready(function ($) {
         if (ceilingUrl) {
             const loader = new THREE.TextureLoader(manager);
             const ceilTex = loader.load(ceilingUrl);
-            ceilTex.encoding = THREE.sRGBEncoding; // エンコーディング
+            ceilTex.encoding = THREE.sRGBEncoding;
             ceilTex.wrapS = THREE.RepeatWrapping;
             ceilTex.wrapT = THREE.RepeatWrapping;
             ceilTex.repeat.set(width / 2, depth / 2);
@@ -778,7 +844,7 @@ jQuery(document).ready(function ($) {
             if (pillarUrl) {
                 const loader = new THREE.TextureLoader(manager);
                 const pTex = loader.load(pillarUrl);
-                pTex.encoding = THREE.sRGBEncoding; // エンコーディング
+                pTex.encoding = THREE.sRGBEncoding;
                 pTex.wrapS = THREE.RepeatWrapping;
                 pTex.wrapT = THREE.RepeatWrapping;
                 pTex.repeat.set(1, height / 2);

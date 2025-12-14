@@ -272,8 +272,12 @@ class EdelMuseumGeneratorAdminPro {
     public function render_art_meta($post) {
         $link = get_post_meta($post->ID, '_edel_art_link', true);
         $glb  = get_post_meta($post->ID, '_edel_art_glb', true);
+        // ★追加: フレーム設定の取得 (デフォルトは wood)
+        $frame = get_post_meta($post->ID, '_edel_art_frame', true) ?: 'wood';
+
         wp_nonce_field('edel_museum_meta_save', 'edel_museum_meta_nonce');
 
+        // サンプル用URL (省略可能ですが残しておきます)
         $sample_1 = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF-Binary/SheenChair.glb';
         $sample_2 = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/AntiqueCamera/glTF-Binary/AntiqueCamera.glb';
         $sample_3 = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Binary/Duck.glb';
@@ -283,6 +287,20 @@ class EdelMuseumGeneratorAdminPro {
             <input type="text" id="edel_art_link" name="edel_art_link" value="<?php echo esc_attr($link); ?>" style="width:100%;" placeholder="https://...">
             <span class="description"><?php _e('URL to navigate when artwork is clicked.', 'edel-museum-generator'); ?></span>
         </p>
+
+        <hr>
+        <p>
+            <label for="edel_art_frame"><strong><?php _e('Frame Style:', 'edel-museum-generator'); ?></strong></label><br>
+            <select name="edel_art_frame" id="edel_art_frame" style="width:100%; max-width:300px;">
+                <option value="wood" <?php selected($frame, 'wood'); ?>><?php _e('Wood (Standard)', 'edel-museum-generator'); ?></option>
+                <option value="black" <?php selected($frame, 'black'); ?>><?php _e('Black (Modern)', 'edel-museum-generator'); ?></option>
+                <option value="white" <?php selected($frame, 'white'); ?>><?php _e('White (Minimal)', 'edel-museum-generator'); ?></option>
+                <option value="none" <?php selected($frame, 'none'); ?>><?php _e('No Frame (Canvas)', 'edel-museum-generator'); ?></option>
+            </select>
+            <br>
+            <span class="description"><?php _e('Select the frame style for 2D images. (Ignored for 3D models)', 'edel-museum-generator'); ?></span>
+        </p>
+
         <hr>
         <p>
             <label for="edel_art_glb"><strong><?php _e('3D Model URL (.glb):', 'edel-museum-generator'); ?></strong></label><br>
@@ -319,15 +337,6 @@ class EdelMuseumGeneratorAdminPro {
                 });
             });
         </script>
-
-        <div style="background: #f0f0f1; padding: 10px; margin-top: 10px; border-radius: 4px;">
-            <strong><?php _e('Try Sample Models:', 'edel-museum-generator'); ?></strong>
-            <div style="margin-top: 5px; display: flex; gap: 10px;">
-                <button type="button" class="button" onclick="document.getElementById('edel_art_glb').value='<?php echo $sample_1; ?>';"><?php _e('Chair', 'edel-museum-generator'); ?></button>
-                <button type="button" class="button" onclick="document.getElementById('edel_art_glb').value='<?php echo $sample_2; ?>';"><?php _e('Camera', 'edel-museum-generator'); ?></button>
-                <button type="button" class="button" onclick="document.getElementById('edel_art_glb').value='<?php echo $sample_3; ?>';"><?php _e('Duck', 'edel-museum-generator'); ?></button>
-            </div>
-        </div>
     <?php
     }
 
@@ -787,6 +796,9 @@ class EdelMuseumGeneratorAdminPro {
 
         if (isset($_POST['edel_art_link'])) {
             update_post_meta($post_id, '_edel_art_link', sanitize_text_field($_POST['edel_art_link']));
+        }
+        if (isset($_POST['edel_art_frame'])) {
+            update_post_meta($post_id, '_edel_art_frame', sanitize_text_field($_POST['edel_art_frame']));
         }
         if (isset($_POST['edel_art_glb'])) {
             update_post_meta($post_id, '_edel_art_glb', sanitize_text_field($_POST['edel_art_glb']));
