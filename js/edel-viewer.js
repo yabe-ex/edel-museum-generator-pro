@@ -84,7 +84,54 @@ jQuery(document).ready(function ($) {
             if ($loadingScreen.is(':visible')) $loadingScreen.fadeOut(500);
         }, 5000);
 
-        // UI
+        // --- UI Styling Fix (Theme Conflict Prevention) ---
+        var baseBtnStyle = {
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '6px 14px',
+            fontSize: '13px',
+            fontWeight: '500',
+            lineHeight: 'normal',
+            color: '#2271b1',
+            backgroundColor: '#f6f7f7',
+            border: '1px solid #2271b1',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            textDecoration: 'none',
+            transition: 'all 0.2s',
+            boxSizing: 'border-box',
+            minHeight: '32px',
+            verticalAlign: 'middle',
+            appearance: 'none',
+            boxShadow: 'none',
+            margin: '0',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
+            width: 'auto',
+            height: 'auto'
+        };
+
+        // 「編集モードに切り替え」ボタン等を見つけてスタイル適用
+        // divでラップされている場合も含めて探索
+        var $buttons = $container.find('a.button');
+        $buttons.each(function () {
+            var $btn = $(this);
+            // 基本スタイル適用
+            $btn.css(baseBtnStyle);
+
+            // Viewer右上のボタンの場合、位置は親divで決まるため、ここでは見た目だけ整える
+            // ホバー効果
+            $btn.hover(
+                function () {
+                    $(this).css({ backgroundColor: '#f0f0f1', color: '#135e96' });
+                },
+                function () {
+                    $(this).css({ backgroundColor: '#f6f7f7', color: '#2271b1' });
+                }
+            );
+        });
+
+        // UI Elements
         var $crosshair = $container.find('#ai-crosshair');
         var $modalOverlay = $container.find('#ai-modal-overlay');
         var $modalClose = $container.find('#ai-modal-close');
@@ -539,10 +586,11 @@ jQuery(document).ready(function ($) {
             raycaster.setFromCamera(center, camera);
             raycaster.far = 5.0;
 
-            // ★修正: interactableObjectsを対象にして判定
+            // ★重要修正: interactableObjectsをターゲットにし、再帰的にチェック
             const hits = raycaster.intersectObjects(interactableObjects, true);
             if (hits.length > 0) {
                 let target = hits[0].object;
+                // 親をたどってタイトルデータを持つグループを探す
                 while (target.parent && !target.userData.title && target.parent !== scene) {
                     target = target.parent;
                 }
@@ -782,7 +830,7 @@ jQuery(document).ready(function ($) {
 
                 wrapper.userData = { title: art.title, desc: art.desc, link: art.link };
                 scene.add(wrapper);
-                interactableObjects.push(wrapper); // ★修正: GLBもインタラクト対象に追加
+                interactableObjects.push(wrapper); // インタラクト対象に追加
             });
         } else if (art.image) {
             const loader = new THREE.TextureLoader(manager);
@@ -803,19 +851,23 @@ jQuery(document).ready(function ($) {
                 mesh.position.z = 0.025;
                 group.add(mesh);
 
-                const frameType = art.frame || 'wood';
+                const frameType = art.frame || 'white'; // Default White
                 if (frameType !== 'none') {
-                    const frameThick = 0.05;
-                    const frameDepth = 0.06;
+                    let frameThick = 0.05;
+                    let frameDepth = 0.06;
                     let frameColor = 0x5c3a21;
                     let frameRough = 0.8;
+
                     if (frameType === 'black') {
                         frameColor = 0x111111;
                         frameRough = 0.5;
                     }
                     if (frameType === 'white') {
-                        frameColor = 0xffffff;
+                        frameColor = 0xeeeeee;
                         frameRough = 0.5;
+                        // ★白フレーム設定（厚みアップ）
+                        frameThick = 0.06;
+                        frameDepth = 0.15;
                     }
 
                     const frameMat = new THREE.MeshStandardMaterial({ color: frameColor, roughness: frameRough });
@@ -847,7 +899,7 @@ jQuery(document).ready(function ($) {
                 group.userData = { title: art.title, desc: art.desc, link: art.link, image: art.image };
 
                 scene.add(group);
-                interactableObjects.push(group); // ★インタラクト対象に追加
+                interactableObjects.push(group); // インタラクト対象に追加
                 addSpotlight(scene, group, direction, isPillar, artLights, initialBrightness);
             });
         }

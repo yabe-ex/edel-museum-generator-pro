@@ -92,11 +92,93 @@ jQuery(document).ready(function ($) {
         }
     }, 5000);
 
+    // --- UI Layout & Styling (Theme Conflict Fixes) ---
+
+    var baseBtnStyle = {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '6px 14px',
+        fontSize: '13px',
+        fontWeight: '500',
+        lineHeight: 'normal',
+        color: '#2271b1',
+        backgroundColor: '#f6f7f7',
+        border: '1px solid #2271b1',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        textDecoration: 'none',
+        transition: 'all 0.2s',
+        boxSizing: 'border-box',
+        minHeight: '32px',
+        verticalAlign: 'middle',
+        appearance: 'none',
+        boxShadow: 'none',
+        margin: '0',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif'
+    };
+
+    var activeBtnStyle = {
+        color: '#fff',
+        backgroundColor: '#2271b1',
+        borderColor: '#2271b1'
+    };
+
+    var dangerBtnStyle = {
+        color: '#d63638',
+        backgroundColor: '#fff',
+        borderColor: '#d63638'
+    };
+
+    // --- ★修正: 切り替えボタンのスタイル適用 ---
+    // .find()を使って、divの中にあるリンクも確実に見つける
+    var $switchBtn = $container.find('a.button');
+
+    if ($switchBtn.length) {
+        // ボタンが見つかった場合、スタイルを強制適用
+        // ポジション指定(top/right)はHTML側のdivで行われているため、ここでは見た目だけを整える
+        $switchBtn.css(
+            $.extend({}, baseBtnStyle, {
+                zIndex: '1001',
+                backgroundColor: '#f6f7f7',
+                color: '#2271b1',
+                width: 'auto',
+                height: 'auto'
+            })
+        );
+
+        // ホバー効果
+        $switchBtn.hover(
+            function () {
+                $(this).css({ backgroundColor: '#f0f0f1', color: '#135e96' });
+            },
+            function () {
+                $(this).css({ backgroundColor: '#f6f7f7', color: '#2271b1' });
+            }
+        );
+    }
+
+    // 既存ボタン取得
     var $saveBtn = $container.find('#museum-save');
     var $clearBtn = $container.find('#museum-clear');
     var $scaleSlider = $container.find('#scale-slider');
     var $scaleValue = $container.find('#scale-value');
     var $scaleWrapper = $container.find('#museum-scale-wrapper');
+
+    var $controlsContainer = $saveBtn.parent();
+    $controlsContainer.css({
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '8px',
+        justifyContent: 'flex-end',
+        padding: '10px',
+        background: '#f0f0f1',
+        borderTop: '1px solid #ddd'
+    });
+
+    $saveBtn.css($.extend({}, baseBtnStyle, activeBtnStyle));
+    $clearBtn.css($.extend({}, baseBtnStyle, dangerBtnStyle));
 
     $scaleSlider.attr('min', '0.1');
 
@@ -109,9 +191,9 @@ jQuery(document).ready(function ($) {
         borderRadius: '4px',
         marginLeft: '10px'
     });
-    var $rotateLabel = $('<label>').css({ fontSize: '13px' }).text('Rotate:');
+    var $rotateLabel = $('<label>').css({ fontSize: '13px', color: '#fff' }).text('Rotate:');
     var $rotateSlider = $('<input>').attr({ type: 'range', id: 'rotate-slider', min: '-180', max: '180', step: '15', value: '0' });
-    var $rotateValue = $('<span>').attr('id', 'rotate-value').css({ fontSize: '12px', minWidth: '35px' }).text('0°');
+    var $rotateValue = $('<span>').attr('id', 'rotate-value').css({ fontSize: '12px', minWidth: '35px', color: '#fff' }).text('0°');
     $rotateWrapper.append($rotateLabel).append($rotateSlider).append($rotateValue);
     $scaleWrapper.after($rotateWrapper);
 
@@ -140,23 +222,23 @@ jQuery(document).ready(function ($) {
         $notification.text(message).stop(true, true).fadeIn(300).delay(1500).fadeOut(500);
     }
 
-    var $modeControls = $('<div>').css({ display: 'flex', gap: '5px', marginRight: '15px' });
-    $container.find('#museum-save').parent().prepend($modeControls);
+    var $modeControls = $('<div>').css({ display: 'flex', gap: '8px', marginRight: 'auto' });
+    $controlsContainer.prepend($modeControls);
 
-    var $btnTranslate = $('<button type="button" class="button">' + edel_vars.txt_move_t + '</button>').appendTo($modeControls);
-    var $btnRotate = $('<button type="button" class="button">' + edel_vars.txt_rotate_r + '</button>').appendTo($modeControls);
+    var $btnTranslate = $('<button type="button">' + edel_vars.txt_move_t + '</button>').appendTo($modeControls);
+    var $btnRotate = $('<button type="button">' + edel_vars.txt_rotate_r + '</button>').appendTo($modeControls);
+
+    $btnTranslate.css(baseBtnStyle);
+    $btnRotate.css(baseBtnStyle);
 
     function updateModeButtons(mode) {
-        $btnTranslate.css({
-            background: mode === 'translate' ? '#2271b1' : '#f6f7f7',
-            color: mode === 'translate' ? '#fff' : '#2271b1',
-            borderColor: '#2271b1'
-        });
-        $btnRotate.css({
-            background: mode === 'rotate' ? '#2271b1' : '#f6f7f7',
-            color: mode === 'rotate' ? '#fff' : '#2271b1',
-            borderColor: '#2271b1'
-        });
+        if (mode === 'translate') {
+            $btnTranslate.css(activeBtnStyle);
+            $btnRotate.css($.extend({}, baseBtnStyle, { color: '#2271b1', backgroundColor: '#f6f7f7' }));
+        } else {
+            $btnTranslate.css($.extend({}, baseBtnStyle, { color: '#2271b1', backgroundColor: '#f6f7f7' }));
+            $btnRotate.css(activeBtnStyle);
+        }
     }
 
     const scene = new THREE.Scene();
@@ -311,7 +393,6 @@ jQuery(document).ready(function ($) {
             artMesh.position.z = 0.025;
             group.add(artMesh);
 
-            // ★変更: デフォルトを white に
             const frameType = art.frame || 'white';
 
             if (frameType !== 'none') {
@@ -325,11 +406,10 @@ jQuery(document).ready(function ($) {
                     frameRough = 0.5;
                 }
                 if (frameType === 'white') {
-                    frameColor = 0xeeeeee; // 真っ白すぎると立体感が消えるので少しグレーに
+                    frameColor = 0xeeeeee;
                     frameRough = 0.5;
-                    // ★変更: 白の場合のみ厚みを増やす
                     frameThick = 0.06;
-                    frameDepth = 0.15; // 奥行きを大幅にアップ
+                    frameDepth = 0.15;
                 }
 
                 const frameMat = new THREE.MeshStandardMaterial({
@@ -486,76 +566,6 @@ jQuery(document).ready(function ($) {
             artworks.push(group);
             scene.add(group);
         }
-    });
-
-    transform.addEventListener('change', () => {
-        const obj = transform.object;
-        if (!obj) return;
-
-        if (transform.getMode() === 'rotate') {
-            obj.rotation.x = 0;
-            obj.rotation.z = 0;
-            if ($rotateWrapper.is(':visible')) {
-                let deg = THREE.MathUtils.radToDeg(obj.rotation.y);
-                deg = Math.round(deg) % 360;
-                if (deg > 180) deg -= 360;
-                else if (deg < -180) deg += 360;
-                $rotateSlider.val(deg);
-                $rotateValue.text(deg + '°');
-            }
-        }
-
-        const wallKey = obj.userData.wall || 'north';
-        if (wallKey === 'free') {
-            if (obj.position.y < -10) obj.position.y = -10;
-            if (obj.position.y > 10) obj.position.y = 10;
-            return;
-        }
-
-        const margin = 0.05;
-        let padding = 0.5;
-        if (wallKey.includes('_') && (wallKey.startsWith('p1') || wallKey.startsWith('p2'))) {
-            const parts = wallKey.split('_');
-            const pId = parts[0];
-            const dir = parts[1];
-            const pillar = pillars.find((p) => p.id === pId);
-            if (pillar) {
-                const pX = pillar.x || 0;
-                const pZ = pillar.z || 0;
-                const pW = pillar.w || 2;
-                const pD = pillar.d || 2;
-                if (dir === 'north') {
-                    obj.position.z = pZ - pD / 2 - margin;
-                    obj.position.x = THREE.MathUtils.clamp(obj.position.x, pX - pW / 2 + padding, pX + pW / 2 - padding);
-                } else if (dir === 'south') {
-                    obj.position.z = pZ + pD / 2 + margin;
-                    obj.position.x = THREE.MathUtils.clamp(obj.position.x, pX - pW / 2 + padding, pX + pW / 2 - padding);
-                } else if (dir === 'east') {
-                    obj.position.x = pX + pW / 2 + margin;
-                    obj.position.z = THREE.MathUtils.clamp(obj.position.z, pZ - pD / 2 + padding, pZ + pD / 2 - padding);
-                } else if (dir === 'west') {
-                    obj.position.x = pX - pW / 2 - margin;
-                    obj.position.z = THREE.MathUtils.clamp(obj.position.z, pZ - pD / 2 + padding, pZ + pD / 2 - padding);
-                }
-            }
-        } else {
-            if (wallKey === 'north') {
-                obj.position.z = -(roomD / 2) + margin;
-                obj.position.x = THREE.MathUtils.clamp(obj.position.x, -roomW / 2 + padding, roomW / 2 - padding);
-            } else if (wallKey === 'south') {
-                obj.position.z = roomD / 2 - margin;
-                obj.position.x = THREE.MathUtils.clamp(obj.position.x, -roomW / 2 + padding, roomW / 2 - padding);
-            } else if (wallKey === 'east') {
-                obj.position.x = roomW / 2 - margin;
-                obj.position.z = THREE.MathUtils.clamp(obj.position.z, -roomD / 2 + padding, roomD / 2 - padding);
-            } else if (wallKey === 'west') {
-                obj.position.x = -(roomW / 2) + margin;
-                obj.position.z = THREE.MathUtils.clamp(obj.position.z, -roomD / 2 + padding, roomD / 2 - padding);
-            }
-        }
-        const halfH = roomH / 2;
-        const limitY = halfH - 0.6;
-        obj.position.y = THREE.MathUtils.clamp(obj.position.y, -limitY, limitY);
     });
 
     // クリック判定用変数
