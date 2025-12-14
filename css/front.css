@@ -1,0 +1,117 @@
+/* ai-museum container */
+.ai-museum-container {
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    touch-action: none; /* スマホでのブラウザスクロール防止 */
+}
+
+/* Crosshair */
+#ai-crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 100;
+}
+#ai-crosshair.hover {
+    border-color: #ff0000;
+    background: rgba(255, 0, 0, 0.2);
+}
+
+/* Modal Overlay */
+#ai-modal-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+/* Modal Content */
+#ai-modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    max-height: 80%;
+    overflow-y: auto;
+    position: relative;
+    text-align: center;
+    color: #333;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Close Button - 見やすく大きく */
+#ai-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 2001;
+}
+#ai-modal-close:hover {
+    color: #000;
+}
+
+#ai-modal-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#ai-modal-title {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+#ai-modal-desc {
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+#ai-modal-link {
+    display: inline-block;
+    background: #0073aa;
+    color: #fff;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+#ai-modal-link:hover {
+    background: #005177;
+}
+
+/* レスポンシブ: スマホ表示 */
+@media (max-width: 768px) {
+    #ai-crosshair {
+        display: none;
+    } /* スマホではクロスヘア不要 */
+    #ai-joystick-zone {
+        display: block !important;
+    } /* ジョイスティック表示 */
+}
