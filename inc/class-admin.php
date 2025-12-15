@@ -360,6 +360,8 @@ class EdelMuseumGeneratorAdminPro {
             'pillar_img' => '',
             'ceiling_img' => '',
             'pillars' => '0',
+            'pillar_width_pct' => '20',
+            'pillar_depth_pct' => '20',
             'room_brightness' => '1.2',
             'spot_brightness' => '1.0',
             'movement_speed' => '20.0',
@@ -595,6 +597,24 @@ class EdelMuseumGeneratorAdminPro {
             <tr>
                 <th><?php _e('Number of Pillars (0-2)', 'edel-museum-generator'); ?></th>
                 <td><input type="number" name="edel_room[pillars]" value="<?php echo esc_attr($meta['pillars']); ?>" min="0" max="2"></td>
+            </tr>
+            <tr>
+                <th><?php _e('Pillar Width (%)', 'edel-museum-generator'); ?></th>
+                <td>
+                    <input type="number" name="edel_room[pillar_width_pct]" value="<?php echo esc_attr($meta['pillar_width_pct']); ?>" step="1" min="5" max="100">
+                    <p class="description" style="font-size:11px;">
+                        <?php _e('Percentage of room width. (1 Pillar: Max 100%, 2 Pillars: Max 50% each)', 'edel-museum-generator'); ?>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <th><?php _e('Pillar Depth (%)', 'edel-museum-generator'); ?></th>
+                <td>
+                    <input type="number" name="edel_room[pillar_depth_pct]" value="<?php echo esc_attr($meta['pillar_depth_pct']); ?>" step="1" min="5" max="50">
+                    <p class="description" style="font-size:11px;">
+                        <?php _e('Percentage of room depth. (Max 50%)', 'edel-museum-generator'); ?>
+                    </p>
+                </td>
             </tr>
         </table>
 
@@ -867,6 +887,55 @@ class EdelMuseumGeneratorAdminPro {
         $room_h = 4;
         $room_d = 16;
         $num_pillars = intval($meta['pillars']);
+
+        $p_w_pct = isset($meta['pillar_width_pct']) ? intval($meta['pillar_width_pct']) : 20;
+        $p_d_pct = isset($meta['pillar_depth_pct']) ? intval($meta['pillar_depth_pct']) : 20;
+
+        // 制限: 奥行きは最大50%
+        if ($p_d_pct > 50) $p_d_pct = 50;
+        if ($p_d_pct < 1)  $p_d_pct = 1;
+
+        // 制限: 幅は柱の数によって上限が変わる
+        $max_w_pct = ($num_pillars === 2) ? 50 : 100;
+        if ($p_w_pct > $max_w_pct) $p_w_pct = $max_w_pct;
+        if ($p_w_pct < 1) $p_w_pct = 1;
+
+        // 実際のサイズ計算 (メートル)
+        $pillar_w = $room_w * ($p_w_pct / 100);
+        $pillar_d = $room_d * ($p_d_pct / 100);
+
+        $pillars_data = array();
+
+        if ($num_pillars === 1) {
+            // 1本: 中心 (0, 0)
+            $pillars_data[] = array(
+                'id' => 'p1',
+                'x' => 0,
+                'z' => 0,
+                'w' => $pillar_w,
+                'd' => $pillar_d
+            );
+        } elseif ($num_pillars === 2) {
+            // 2本: 左右対称配置
+            // 部屋の幅の1/4の位置（-room_w/4, +room_w/4）に置くときれいに分割される
+            $pos_x = $room_w / 4;
+
+            $pillars_data[] = array(
+                'id' => 'p1',
+                'x' => -$pos_x,
+                'z' => 0,
+                'w' => $pillar_w,
+                'd' => $pillar_d
+            );
+            $pillars_data[] = array(
+                'id' => 'p2',
+                'x' => $pos_x,
+                'z' => 0,
+                'w' => $pillar_w,
+                'd' => $pillar_d
+            );
+        }
+
         $pillars_data = array();
         $pillar_size = 2;
         if ($num_pillars === 1) {

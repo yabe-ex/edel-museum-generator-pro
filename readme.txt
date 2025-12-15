@@ -1,6 +1,6 @@
 === Edel Museum Generator Pro ===
 Contributors: yabea
-Tags: 3d, gallery, museum, virtual tour, three.js, portfolio, woocommerce, frame, caption
+Tags: 3d, gallery, museum, virtual tour, three.js, portfolio, woocommerce, frame, caption, pillars
 Requires at least: 5.8
 Tested up to: 6.9
 Stable tag: 1.4.0
@@ -8,7 +8,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Premium version.
-Unlock Link integration, 3D Model (GLB) support, Artwork Frames, and Title Labels.
+Unlock Link integration, 3D Model (GLB) support, Artwork Frames, Title Labels, and Advanced Structure Settings.
 
 == Description ==
 
@@ -22,7 +22,7 @@ This premium version extends the capabilities of the standard generator with pow
 * **3D Model Support (GLB/GLTF):** Go beyond 2D images. Place 3D sculptures, furniture, or artifacts in the free space of your museum.
 * **Artwork Frames:** Choose from **Wood**, **Black**, **White**, or **No Frame** for your 2D paintings to match your exhibition style.
 * **Title Labels:** Automatically displays a stylish white plate with the artwork title below each 2D piece. You can toggle this ON/OFF and adjust font size.
-* **Advanced Structure:** Add pillars (columns) to your room layout to create more complex gallery spaces.
+* **Advanced Structure:** Add pillars (columns) to your room layout. **New:** You can now adjust the **Width** and **Depth** of pillars (in %) to create unique room shapes.
 * **Immersive 3D Walkthrough:** Smooth FPS-style navigation with keyboard/mouse or touch controls.
 * **Visual Editor:** Real-time 3D editor in the backend to move, rotate, and scale your artworks.
 * **Full I18n Support:** Ready for translation into any language.
@@ -34,7 +34,7 @@ This premium version extends the capabilities of the standard generator with pow
 1.  Upload the `edel-museum-generator-pro` folder to the `/wp-content/plugins/` directory.
 2.  Activate the plugin through the 'Plugins' menu in WordPress.
 3.  Go to **Museum Artworks** to add your art pieces. You can set the **Frame Style** here.
-4.  Go to **Exhibition Settings** to configure your room. You can toggle **Show Title Labels** and adjust **Label Font Size** here.
+4.  Go to **Exhibition Settings** to configure your room. You can set **Pillars**, **Pillar Size**, and **Title Labels** here.
 5.  Copy the shortcode (e.g., `[edel_museum id="123"]`) and paste it into any post or page.
 
 == Screenshots ==
@@ -44,6 +44,10 @@ This premium version extends the capabilities of the standard generator with pow
 3.  **Artwork Settings:** Adding links, uploading GLB files, and selecting frame styles.
 
 == Frequently Asked Questions ==
+
+= Can I adjust the size of the pillars? =
+Yes, in the **Exhibition Settings**, you can specify the "Pillar Width (%)" and "Pillar Depth (%)".
+If you set 2 pillars with 50% width, you can create a layout divided into two large sections.
 
 = Can I hide the title labels? =
 Yes, in the **Exhibition Settings**, uncheck "Show Title Labels" to hide them for that room.
@@ -64,6 +68,7 @@ When a visitor clicks on the artwork in the virtual museum, a "View Details" but
 == Changelog ==
 
 = 1.4.0 =
+* Feature: Added Pillar Size adjustment (Width/Depth %) in Exhibition Settings.
 * Feature: Added Title Labels below 2D artworks.
 * Feature: Added "Show Title Labels" toggle in Exhibition Settings.
 * Feature: Added "Label Font Size" setting.

@@ -18,7 +18,7 @@ class EdelMuseumGeneratorFrontPro {
 
         $localize_data = array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce'   => wp_create_nonce(EDEL_MUSEUM_GENERATOR_PRO_SLUG), // ★修正
+            'nonce'   => wp_create_nonce(EDEL_MUSEUM_GENERATOR_PRO_SLUG),
             'action_save'  => 'edel_museum_pro_save_layout',
             'action_clear' => 'edel_museum_pro_clear_layout',
             'txt_saved' => __('Saved!', 'edel-museum-generator'),
@@ -47,18 +47,15 @@ class EdelMuseumGeneratorFrontPro {
             wp_enqueue_script('three-orbitcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js', array('three'), '0.128.0', true);
             wp_enqueue_script('three-transformcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js', array('three'), '0.128.0', true);
 
-            // ★定数変更
             wp_enqueue_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-editor', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/edel-editor.js', array('jquery', 'three', 'three-orbitcontrols', 'three-transformcontrols', 'three-gltf-loader'), $version, true);
             wp_localize_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-editor', 'edel_vars', $localize_data);
         } else {
             wp_enqueue_script('three-pointerlockcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js', array('three'), '0.128.0', true);
 
-            // ★定数変更
             wp_enqueue_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-viewer', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/edel-viewer.js', array('jquery', 'three', 'three-pointerlockcontrols', 'three-gltf-loader', 'nipplejs'), $version, true);
             wp_localize_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-viewer', 'edel_vars', $localize_data);
         }
 
-        // ★定数変更
         wp_enqueue_style(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-front', EDEL_MUSEUM_GENERATOR_PRO_URL . '/css/front.css', array(), $version);
     }
 
@@ -70,14 +67,52 @@ class EdelMuseumGeneratorFrontPro {
         $room_h = 4;
         $room_d = 16;
         $num_pillars = intval($meta['pillars']);
+
+        // --- 柱のサイズ計算ロジック ---
+        $p_w_pct = isset($meta['pillar_width_pct']) ? intval($meta['pillar_width_pct']) : 20;
+        $p_d_pct = isset($meta['pillar_depth_pct']) ? intval($meta['pillar_depth_pct']) : 20;
+
+        // 制限
+        if ($p_d_pct > 50) $p_d_pct = 50;
+        if ($p_d_pct < 1)  $p_d_pct = 1;
+
+        $max_w_pct = ($num_pillars === 2) ? 50 : 100;
+        if ($p_w_pct > $max_w_pct) $p_w_pct = $max_w_pct;
+        if ($p_w_pct < 1) $p_w_pct = 1;
+
+        // メートル換算
+        $pillar_w = $room_w * ($p_w_pct / 100);
+        $pillar_d = $room_d * ($p_d_pct / 100);
+
         $pillars_data = array();
-        $pillar_size = 2;
+        $pillar_size = 2; // フォールバック用（上書きされるので実際には $pillar_w/d が使われる）
 
         if ($num_pillars === 1) {
-            $pillars_data[] = array('id' => 'p1', 'x' => 0, 'z' => 0, 'w' => $pillar_size, 'd' => $pillar_size);
+            // 1本: 中心
+            $pillars_data[] = array(
+                'id' => 'p1',
+                'x' => 0,
+                'z' => 0,
+                'w' => $pillar_w,
+                'd' => $pillar_d
+            );
         } elseif ($num_pillars === 2) {
-            $pillars_data[] = array('id' => 'p1', 'x' => -3, 'z' => 0, 'w' => $pillar_size, 'd' => $pillar_size);
-            $pillars_data[] = array('id' => 'p2', 'x' => 3, 'z' => 0, 'w' => $pillar_size, 'd' => $pillar_size);
+            // 2本: 左右対称配置 (部屋幅の1/4位置)
+            $pos_x = $room_w / 4;
+            $pillars_data[] = array(
+                'id' => 'p1',
+                'x' => -$pos_x,
+                'z' => 0,
+                'w' => $pillar_w,
+                'd' => $pillar_d
+            );
+            $pillars_data[] = array(
+                'id' => 'p2',
+                'x' => $pos_x,
+                'z' => 0,
+                'w' => $pillar_w,
+                'd' => $pillar_d
+            );
         }
 
         $layout = array(
@@ -85,15 +120,16 @@ class EdelMuseumGeneratorFrontPro {
                 'width' => $room_w,
                 'height' => $room_h,
                 'depth' => $room_d,
-                'floor_image'   => $meta['floor_img'],
-                'wall_image'    => $meta['wall_img'],
-                'pillar_image'  => $meta['pillar_img'],
-                'ceiling_image' => $meta['ceiling_img'],
+                'floor_image'   => isset($meta['floor_img']) ? $meta['floor_img'] : '',
+                'wall_image'    => isset($meta['wall_img']) ? $meta['wall_img'] : '',
+                'pillar_image'  => isset($meta['pillar_img']) ? $meta['pillar_img'] : '',
+                'ceiling_image' => isset($meta['ceiling_img']) ? $meta['ceiling_img'] : '',
                 'room_brightness' => isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2',
                 'spot_brightness' => isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0',
                 'movement_speed'  => isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0',
+                // ラベル設定
                 'label_font_size' => isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30,
-                'label_display' => isset($meta['label_display']) ? ($meta['label_display'] === '1') : true,
+                'label_display'   => isset($meta['label_display']) ? ($meta['label_display'] === '1') : true,
             ),
             'pillars' => $pillars_data,
             'artworks' => array(),
@@ -207,7 +243,7 @@ class EdelMuseumGeneratorFrontPro {
                     'id'    => $art_id,
                     'image' => $img_url,
                     'glb'   => $glb_url,
-                    'frame' => $frame_type, // ★JSに渡す
+                    'frame' => $frame_type,
                     'title' => $art_post->post_title,
                     'desc'  => wp_strip_all_tags($art_post->post_content),
                     'link'  => get_post_meta($art_id, '_edel_art_link', true),
@@ -247,8 +283,16 @@ class EdelMuseumGeneratorFrontPro {
                 $layout['room']['room_brightness'] = isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2';
                 $layout['room']['spot_brightness'] = isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0';
                 $layout['room']['movement_speed'] = isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0';
+                // ラベル設定上書き
                 $layout['room']['label_font_size'] = isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30;
-                $layout['room']['label_display'] = isset($meta['label_display']) ? ($meta['label_display'] === '1') : true;
+                $layout['room']['label_display']   = isset($meta['label_display']) ? ($meta['label_display'] === '1') : true;
+            }
+
+            // ★柱情報の強制上書き★
+            // 設定画面の％指定に基づいて再計算した柱データを適用
+            $fresh_layout = $this->build_layout_from_exhibition($exhibition_id);
+            if ($fresh_layout && isset($fresh_layout['pillars'])) {
+                $layout['pillars'] = $fresh_layout['pillars'];
             }
 
             if (isset($layout['artworks']) && is_array($layout['artworks'])) {
