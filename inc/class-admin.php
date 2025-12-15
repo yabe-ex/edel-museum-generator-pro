@@ -61,6 +61,9 @@ class EdelMuseumGeneratorAdminPro {
                     <li>
                         <strong><?php _e('For 2D Images (Paintings):', 'edel-museum-generator'); ?></strong><br>
                         <?php _e('Set the <strong>Featured Image</strong> (right sidebar). This will be framed on the wall.', 'edel-museum-generator'); ?>
+                        <ul style="list-style:circle; margin-left:20px; color:#555; margin-top:5px; margin-bottom:10px;">
+                            <li><strong><?php _e('Frame Style:', 'edel-museum-generator'); ?></strong> <?php _e('Select a frame style (Wood, Black, White, or No Frame) in the "Artwork Options" metabox.', 'edel-museum-generator'); ?></li>
+                        </ul>
                     </li>
                     <li>
                         <strong><?php _e('For 3D Models (Sculptures/Objects):', 'edel-museum-generator'); ?></strong><br>
@@ -78,19 +81,39 @@ class EdelMuseumGeneratorAdminPro {
                 <ol style="margin-left: 20px; line-height: 1.8;">
                     <li><?php _e('Go to <strong>Exhibition Settings > Add New Exhibition</strong>.', 'edel-museum-generator'); ?></li>
                     <li><strong><?php _e('Textures:', 'edel-museum-generator'); ?></strong> <?php _e('Select images for Floor, Wall, Pillar, and Ceiling.', 'edel-museum-generator'); ?></li>
-                    <li><strong><?php _e('Structure:', 'edel-museum-generator'); ?></strong> <?php _e('Choose the number of pillars (0, 1, or 2).', 'edel-museum-generator'); ?></li>
+                    <li><strong><?php _e('Structure:', 'edel-museum-generator'); ?></strong> <?php _e('Choose the number of pillars (0, 1, or 2).', 'edel-museum-generator'); ?>
+                        <ul style="list-style:circle; margin-left:20px; color:#555; margin-top:5px; margin-bottom:10px;">
+                            <li><?php _e('You can adjust the <strong>Width</strong>, <strong>Depth</strong>, and <strong>Placement X</strong> (offset/spacing) of the pillars.', 'edel-museum-generator'); ?></li>
+                        </ul>
+                    </li>
                     <li><strong><?php _e('Placement:', 'edel-museum-generator'); ?></strong>
                         <ul style="list-style:disc; margin-left:20px; color:#555;">
                             <li><strong><?php _e('Walls/Pillars:', 'edel-museum-generator'); ?></strong> <?php _e('Click <strong>"Select"</strong> to choose 2D artworks.', 'edel-museum-generator'); ?></li>
                             <li><strong><?php _e('Free Space:', 'edel-museum-generator'); ?></strong> <?php _e('Click <strong>"Select"</strong> to choose 3D artworks (.glb).', 'edel-museum-generator'); ?></li>
                         </ul>
                     </li>
-                    <li><strong><?php _e('Settings:', 'edel-museum-generator'); ?></strong> <?php _e('Adjust Brightness and <strong>Movement Speed</strong> (Default: 20.0).', 'edel-museum-generator'); ?></li>
+                    <li><strong><?php _e('Settings:', 'edel-museum-generator'); ?></strong> <?php _e('Configure the viewing experience:', 'edel-museum-generator'); ?>
+                        <ul style="list-style:disc; margin-left:20px; color:#555; margin-top:5px;">
+                            <li><strong><?php _e('Movement:', 'edel-museum-generator'); ?></strong> <?php _e('Adjust Brightness and <strong>Movement Speed</strong>.', 'edel-museum-generator'); ?></li>
+                            <li><strong><?php _e('Start Position:', 'edel-museum-generator'); ?></strong> <?php _e('Select the starting point (South, North, East, West).', 'edel-museum-generator'); ?></li>
+                            <li><strong><?php _e('Labels:', 'edel-museum-generator'); ?></strong> <?php _e('Toggle <strong>Show Title Labels</strong> and adjust <strong>Label Font Size</strong>.', 'edel-museum-generator'); ?></li>
+                        </ul>
+                    </li>
                 </ol>
 
                 <h2 style="border-bottom: 2px solid #2271b1; padding-bottom: 10px; margin-bottom: 20px; margin-top: 40px;">
+                    <span class="dashicons dashicons-shortcode" style="font-size:24px;width:24px;height:24px;margin-right:5px;"></span>
+                    <?php _e('Step 3: Display on Site', 'edel-museum-generator'); ?>
+                </h2>
+                <p><?php _e('Embed the museum on any page using a shortcode.', 'edel-museum-generator'); ?></p>
+                <code style="background: #e5e5e5; padding: 10px; display: block; margin: 10px 0; font-size: 16px;">
+                    [edel_museum id="123"]
+                </code>
+                <p><?php _e('Replace <strong>123</strong> with your Exhibition ID (found in the URL when editing the exhibition).', 'edel-museum-generator'); ?></p>
+
+                <h2 style="border-bottom: 2px solid #2271b1; padding-bottom: 10px; margin-bottom: 20px; margin-top: 40px;">
                     <span class="dashicons dashicons-move" style="font-size:24px;width:24px;height:24px;margin-right:5px;"></span>
-                    <?php _e('Step 3: 3D Layout Editor', 'edel-museum-generator'); ?>
+                    <?php _e('Step 4: 3D Layout Editor', 'edel-museum-generator'); ?>
                 </h2>
                 <p><?php _e('Fine-tune the position, size, and angle of your artworks in real-time 3D.', 'edel-museum-generator'); ?></p>
                 <div style="background: #f0f0f1; padding: 15px; border-left: 4px solid #2271b1;">
@@ -109,16 +132,6 @@ class EdelMuseumGeneratorAdminPro {
                     </li>
                     <li><?php _e('Click <strong>"Save Layout"</strong> to apply changes.', 'edel-museum-generator'); ?></li>
                 </ol>
-
-                <h2 style="border-bottom: 2px solid #2271b1; padding-bottom: 10px; margin-bottom: 20px; margin-top: 40px;">
-                    <span class="dashicons dashicons-shortcode" style="font-size:24px;width:24px;height:24px;margin-right:5px;"></span>
-                    <?php _e('Step 4: Display on Site', 'edel-museum-generator'); ?>
-                </h2>
-                <p><?php _e('Embed the museum on any page using a shortcode.', 'edel-museum-generator'); ?></p>
-                <code style="background: #e5e5e5; padding: 10px; display: block; margin: 10px 0; font-size: 16px;">
-                    [edel_museum id="123"]
-                </code>
-                <p><?php _e('Replace <strong>123</strong> with your Exhibition ID (found in the URL when editing the exhibition).', 'edel-museum-generator'); ?></p>
 
                 <hr style="margin: 40px 0;">
                 <p style="text-align: right; color: #888;">
@@ -362,6 +375,7 @@ class EdelMuseumGeneratorAdminPro {
             'pillars' => '0',
             'pillar_width_pct' => '20',
             'pillar_depth_pct' => '20',
+            'pillar_placement_x' => '',
             'room_brightness' => '1.2',
             'spot_brightness' => '1.0',
             'movement_speed' => '20.0',
@@ -545,7 +559,21 @@ class EdelMuseumGeneratorAdminPro {
                 <th><?php _e('Movement Speed', 'edel-museum-generator'); ?></th>
                 <td>
                     <input type="number" name="edel_room[movement_speed]" value="<?php echo esc_attr($meta['movement_speed']); ?>" step="1.0" min="1.0" max="50.0">
-                    <p class="description" style="font-size:11px;">Default: 20.0 (Range: 1.0 - 50.0)</p>
+                    <p class="description" style="font-size:11px;">Default: 30.0 (Range: 1.0 - 50.0)</p>
+                </td>
+            </tr>
+            <tr>
+                <th><?php _e('Start Position', 'edel-museum-generator'); ?></th>
+                <td>
+                    <select name="edel_room[start_position]" style="width:100%; max-width:200px;">
+                        <option value="south" <?php selected($meta['start_position'], 'south'); ?>><?php _e('South (Default)', 'edel-museum-generator'); ?></option>
+                        <option value="north" <?php selected($meta['start_position'], 'north'); ?>><?php _e('North', 'edel-museum-generator'); ?></option>
+                        <option value="east" <?php selected($meta['start_position'], 'east'); ?>><?php _e('East', 'edel-museum-generator'); ?></option>
+                        <option value="west" <?php selected($meta['start_position'], 'west'); ?>><?php _e('West', 'edel-museum-generator'); ?></option>
+                    </select>
+                    <p class="description" style="font-size:11px;">
+                        <?php _e('Choose the starting point and orientation.', 'edel-museum-generator'); ?>
+                    </p>
                 </td>
             </tr>
             <div class="edel-section-title"><?php _e('Lighting & Movement', 'edel-museum-generator'); ?></div>
@@ -554,7 +582,9 @@ class EdelMuseumGeneratorAdminPro {
                     <th><?php _e('Label Font Size (%)', 'edel-museum-generator'); ?></th>
                     <td>
                         <input type="number" name="edel_room[label_font_size]" value="<?php echo esc_attr($meta['label_font_size']); ?>" step="1" min="10" max="80">
-                        <p class="description" style="font-size:11px;">Default: 30 (Range: 10 - 80). Adjust the size of the artwork title text.</p>
+                        <p class="description" style="font-size:11px;">
+                            <?php _e('Default: 30 (Range: 10 - 80). Adjust the size of the artwork title text.', 'edel-museum-generator'); ?>
+                        </p>
                     </td>
                 </tr>
                 <tr>
@@ -601,7 +631,7 @@ class EdelMuseumGeneratorAdminPro {
             <tr>
                 <th><?php _e('Pillar Width (%)', 'edel-museum-generator'); ?></th>
                 <td>
-                    <input type="number" name="edel_room[pillar_width_pct]" value="<?php echo esc_attr($meta['pillar_width_pct']); ?>" step="1" min="5" max="100">
+                    <input type="number" name="edel_room[pillar_width_pct]" value="<?php echo esc_attr($meta['pillar_width_pct']); ?>" step="1" min="1" max="100">
                     <p class="description" style="font-size:11px;">
                         <?php _e('Percentage of room width. (1 Pillar: Max 100%, 2 Pillars: Max 50% each)', 'edel-museum-generator'); ?>
                     </p>
@@ -610,9 +640,18 @@ class EdelMuseumGeneratorAdminPro {
             <tr>
                 <th><?php _e('Pillar Depth (%)', 'edel-museum-generator'); ?></th>
                 <td>
-                    <input type="number" name="edel_room[pillar_depth_pct]" value="<?php echo esc_attr($meta['pillar_depth_pct']); ?>" step="1" min="5" max="50">
+                    <input type="number" name="edel_room[pillar_depth_pct]" value="<?php echo esc_attr($meta['pillar_depth_pct']); ?>" step="1" min="1" max="50">
                     <p class="description" style="font-size:11px;">
                         <?php _e('Percentage of room depth. (Max 50%)', 'edel-museum-generator'); ?>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <th><?php _e('Pillar Placement X (%)', 'edel-museum-generator'); ?></th>
+                <td>
+                    <input type="number" name="edel_room[pillar_placement_x]" value="<?php echo esc_attr($meta['pillar_placement_x']); ?>" step="1" min="-45" max="45" placeholder="Auto">
+                    <p class="description" style="font-size:11px;">
+                        <?php _e('1 Pillar: Offset from center (Default: 0). <br>2 Pillars: Distance from center (Default: 25). <br>Range: -45 to 45.', 'edel-museum-generator'); ?>
                     </p>
                 </td>
             </tr>
@@ -904,13 +943,29 @@ class EdelMuseumGeneratorAdminPro {
         $pillar_w = $room_w * ($p_w_pct / 100);
         $pillar_d = $room_d * ($p_d_pct / 100);
 
+        if (isset($meta['pillar_placement_x']) && $meta['pillar_placement_x'] !== '') {
+            $place_pct = intval($meta['pillar_placement_x']);
+        } else {
+            // デフォルト値: 1本なら0(中心)、2本なら25(部屋幅の1/4)
+            $place_pct = ($num_pillars === 2) ? 25 : 0;
+        }
+
+        // 安全装置: -45% 〜 45% の範囲に収める
+        if ($place_pct < -45) $place_pct = -45;
+        if ($place_pct > 45)  $place_pct = 45;
+
+        // メートル換算
+        // 1本の場合: 中心(0)からの移動量
+        // 2本の場合: 中心(0)からの距離（左右対称）
+        $shift_x = $room_w * ($place_pct / 100);
+
         $pillars_data = array();
 
         if ($num_pillars === 1) {
             // 1本: 中心 (0, 0)
             $pillars_data[] = array(
                 'id' => 'p1',
-                'x' => 0,
+                'x' => -$shift_x,
                 'z' => 0,
                 'w' => $pillar_w,
                 'd' => $pillar_d
@@ -922,14 +977,14 @@ class EdelMuseumGeneratorAdminPro {
 
             $pillars_data[] = array(
                 'id' => 'p1',
-                'x' => -$pos_x,
+                'x' => -$shift_x,
                 'z' => 0,
                 'w' => $pillar_w,
                 'd' => $pillar_d
             );
             $pillars_data[] = array(
                 'id' => 'p2',
-                'x' => $pos_x,
+                'x' => $shift_x,
                 'z' => 0,
                 'w' => $pillar_w,
                 'd' => $pillar_d
@@ -955,7 +1010,8 @@ class EdelMuseumGeneratorAdminPro {
                 'ceiling_image' => $meta['ceiling_img'],
                 'room_brightness' => isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2',
                 'spot_brightness' => isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0',
-                'movement_speed'  => isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0',
+                'movement_speed'  => isset($meta['movement_speed']) ? $meta['movement_speed'] : '30.0',
+                'start_position'  => isset($meta['start_position']) ? $meta['start_position'] : 'south',
                 'label_font_size' => isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30,
                 'label_display' => isset($meta['label_display']) ? ($meta['label_display'] === '1') : false,
             ),

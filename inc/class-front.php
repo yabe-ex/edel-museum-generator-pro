@@ -68,11 +68,10 @@ class EdelMuseumGeneratorFrontPro {
         $room_d = 16;
         $num_pillars = intval($meta['pillars']);
 
-        // --- 柱のサイズ計算ロジック ---
+        // --- 柱のサイズ計算 ---
         $p_w_pct = isset($meta['pillar_width_pct']) ? intval($meta['pillar_width_pct']) : 20;
         $p_d_pct = isset($meta['pillar_depth_pct']) ? intval($meta['pillar_depth_pct']) : 20;
 
-        // 制限
         if ($p_d_pct > 50) $p_d_pct = 50;
         if ($p_d_pct < 1)  $p_d_pct = 1;
 
@@ -80,39 +79,28 @@ class EdelMuseumGeneratorFrontPro {
         if ($p_w_pct > $max_w_pct) $p_w_pct = $max_w_pct;
         if ($p_w_pct < 1) $p_w_pct = 1;
 
-        // メートル換算
         $pillar_w = $room_w * ($p_w_pct / 100);
         $pillar_d = $room_d * ($p_d_pct / 100);
 
+        // --- 柱の配置位置 X 計算 ---
+        if (isset($meta['pillar_placement_x']) && $meta['pillar_placement_x'] !== '') {
+            $place_pct = intval($meta['pillar_placement_x']);
+        } else {
+            $place_pct = ($num_pillars === 2) ? 25 : 0;
+        }
+
+        if ($place_pct < -45) $place_pct = -45;
+        if ($place_pct > 45)  $place_pct = 45;
+
+        $shift_x = $room_w * ($place_pct / 100);
+
         $pillars_data = array();
-        $pillar_size = 2; // フォールバック用（上書きされるので実際には $pillar_w/d が使われる）
 
         if ($num_pillars === 1) {
-            // 1本: 中心
-            $pillars_data[] = array(
-                'id' => 'p1',
-                'x' => 0,
-                'z' => 0,
-                'w' => $pillar_w,
-                'd' => $pillar_d
-            );
+            $pillars_data[] = array('id' => 'p1', 'x' => $shift_x, 'z' => 0, 'w' => $pillar_w, 'd' => $pillar_d);
         } elseif ($num_pillars === 2) {
-            // 2本: 左右対称配置 (部屋幅の1/4位置)
-            $pos_x = $room_w / 4;
-            $pillars_data[] = array(
-                'id' => 'p1',
-                'x' => -$pos_x,
-                'z' => 0,
-                'w' => $pillar_w,
-                'd' => $pillar_d
-            );
-            $pillars_data[] = array(
-                'id' => 'p2',
-                'x' => $pos_x,
-                'z' => 0,
-                'w' => $pillar_w,
-                'd' => $pillar_d
-            );
+            $pillars_data[] = array('id' => 'p1', 'x' => -$shift_x, 'z' => 0, 'w' => $pillar_w, 'd' => $pillar_d);
+            $pillars_data[] = array('id' => 'p2', 'x' => $shift_x, 'z' => 0, 'w' => $pillar_w, 'd' => $pillar_d);
         }
 
         $layout = array(
@@ -127,7 +115,8 @@ class EdelMuseumGeneratorFrontPro {
                 'room_brightness' => isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2',
                 'spot_brightness' => isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0',
                 'movement_speed'  => isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0',
-                // ラベル設定
+                // ★追加: スタート位置
+                'start_position'  => isset($meta['start_position']) ? $meta['start_position'] : 'south',
                 'label_font_size' => isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30,
                 'label_display'   => isset($meta['label_display']) ? ($meta['label_display'] === '1') : true,
             ),
@@ -283,13 +272,14 @@ class EdelMuseumGeneratorFrontPro {
                 $layout['room']['room_brightness'] = isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2';
                 $layout['room']['spot_brightness'] = isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0';
                 $layout['room']['movement_speed'] = isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0';
-                // ラベル設定上書き
+
+                // ★追加: スタート位置とラベル設定
+                $layout['room']['start_position'] = isset($meta['start_position']) ? $meta['start_position'] : 'south';
                 $layout['room']['label_font_size'] = isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30;
                 $layout['room']['label_display']   = isset($meta['label_display']) ? ($meta['label_display'] === '1') : true;
             }
 
-            // ★柱情報の強制上書き★
-            // 設定画面の％指定に基づいて再計算した柱データを適用
+            // 柱情報の強制上書き
             $fresh_layout = $this->build_layout_from_exhibition($exhibition_id);
             if ($fresh_layout && isset($fresh_layout['pillars'])) {
                 $layout['pillars'] = $fresh_layout['pillars'];

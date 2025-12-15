@@ -169,7 +169,29 @@ jQuery(document).ready(function ($) {
         const floorY = -roomH / 2;
 
         const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
-        camera.position.set(0, floorY + currentEyeHeight, roomD / 2 - 0.5);
+
+        const startPos = room.start_position || 'south';
+        const margin = 0.5;
+
+        if (startPos === 'north') {
+            // 北側スタート: Z = -roomD/2 (奥), 南(+Z)を向く
+            camera.position.set(0, floorY + currentEyeHeight, -roomD / 2 + margin);
+            camera.rotation.y = Math.PI; // 180度回転
+        } else if (startPos === 'east') {
+            // 東側スタート: X = +roomW/2 (右), 西(-X)を向く
+            camera.position.set(roomW / 2 - margin, floorY + currentEyeHeight, 0);
+            camera.rotation.y = Math.PI / 2; // +90度回転
+        } else if (startPos === 'west') {
+            // 西側スタート: X = -roomW/2 (左), 東(+X)を向く
+            camera.position.set(-roomW / 2 + margin, floorY + currentEyeHeight, 0);
+            camera.rotation.y = -Math.PI / 2; // -90度回転
+        } else {
+            // 南側スタート (デフォルト): Z = +roomD/2 (手前), 北(-Z)を向く
+            camera.position.set(0, floorY + currentEyeHeight, roomD / 2 - margin);
+            camera.rotation.y = 0; // 回転なし
+        }
+
+        // camera.position.set(0, floorY + currentEyeHeight, roomD / 2 - 0.5);
 
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
         renderer.setSize(width, height);
