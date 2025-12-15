@@ -363,6 +363,8 @@ class EdelMuseumGeneratorAdminPro {
             'room_brightness' => '1.2',
             'spot_brightness' => '1.0',
             'movement_speed' => '20.0',
+            'label_font_size' => '30',
+            'label_display' => '1',
             'north' => '',
             'south' => '',
             'east' => '',
@@ -544,6 +546,25 @@ class EdelMuseumGeneratorAdminPro {
                     <p class="description" style="font-size:11px;">Default: 20.0 (Range: 1.0 - 50.0)</p>
                 </td>
             </tr>
+            <div class="edel-section-title"><?php _e('Lighting & Movement', 'edel-museum-generator'); ?></div>
+            <table class="edel-meta-table">
+                <tr>
+                    <th><?php _e('Label Font Size (%)', 'edel-museum-generator'); ?></th>
+                    <td>
+                        <input type="number" name="edel_room[label_font_size]" value="<?php echo esc_attr($meta['label_font_size']); ?>" step="1" min="10" max="80">
+                        <p class="description" style="font-size:11px;">Default: 30 (Range: 10 - 80). Adjust the size of the artwork title text.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php _e('Show Title Labels', 'edel-museum-generator'); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="edel_room[label_display]" value="1" <?php checked($meta['label_display'], '1'); ?>>
+                            <?php _e('Display title labels below artworks.', 'edel-museum-generator'); ?>
+                        </label>
+                    </td>
+                </tr>
+            </table>
         </table>
 
         <div class="edel-section-title"><?php _e('Textures (Image URL)', 'edel-museum-generator'); ?></div>
@@ -809,6 +830,8 @@ class EdelMuseumGeneratorAdminPro {
             foreach ($_POST['edel_room'] as $k => $v) {
                 $clean_data[$k] = sanitize_text_field($v);
             }
+            $clean_data['label_display'] = isset($_POST['edel_room']['label_display']) ? '1' : '0';
+
             update_post_meta($post_id, '_edel_exhibition_data', $clean_data);
 
             $old_json = get_post_meta($post_id, '_edel_museum_layout', true);
@@ -864,6 +887,8 @@ class EdelMuseumGeneratorAdminPro {
                 'room_brightness' => isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2',
                 'spot_brightness' => isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0',
                 'movement_speed'  => isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0',
+                'label_font_size' => isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30,
+                'label_display' => isset($meta['label_display']) ? ($meta['label_display'] === '1') : false,
             ),
             'pillars' => $pillars_data,
             'artworks' => array(),

@@ -92,6 +92,8 @@ class EdelMuseumGeneratorFrontPro {
                 'room_brightness' => isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2',
                 'spot_brightness' => isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0',
                 'movement_speed'  => isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0',
+                'label_font_size' => isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30,
+                'label_display' => isset($meta['label_display']) ? ($meta['label_display'] === '1') : true,
             ),
             'pillars' => $pillars_data,
             'artworks' => array(),
@@ -245,6 +247,8 @@ class EdelMuseumGeneratorFrontPro {
                 $layout['room']['room_brightness'] = isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2';
                 $layout['room']['spot_brightness'] = isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0';
                 $layout['room']['movement_speed'] = isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0';
+                $layout['room']['label_font_size'] = isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30;
+                $layout['room']['label_display'] = isset($meta['label_display']) ? ($meta['label_display'] === '1') : true;
             }
 
             if (isset($layout['artworks']) && is_array($layout['artworks'])) {

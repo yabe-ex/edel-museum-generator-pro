@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Edel Museum Generator Pro
  * Description: Premium version. Unlock Link integration and 3D Model (GLB) support.
- * Version: 1.3.1
+ * Version: 1.4.0
  * Author: Edel Hearts
  * Author URI: https://edel-hearts.com
  * Text Domain: edel-museum-generator

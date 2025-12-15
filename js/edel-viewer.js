@@ -162,6 +162,8 @@ jQuery(document).ready(function ($) {
         const useReflection = room.floor_reflection === true;
         const reflectionIntensity = parseFloat(room.reflection_intensity) || 0.3;
         const moveSpeed = parseFloat(room.movement_speed) || 20.0;
+        const labelFontSize = parseInt(room.label_font_size) || 30;
+        const showLabels = room.label_display !== false;
 
         let currentEyeHeight = 1.6;
         const floorY = -roomH / 2;
@@ -219,7 +221,19 @@ jQuery(document).ready(function ($) {
         const interactableObjects = [];
         if (Array.isArray(layout.artworks)) {
             layout.artworks.forEach((art) => {
-                addArtworkPlane(scene, art, roomW, roomH, roomD, artLights, defaultSpotBrightness, interactableObjects, manager);
+                addArtworkPlane(
+                    scene,
+                    art,
+                    roomW,
+                    roomH,
+                    roomD,
+                    artLights,
+                    defaultSpotBrightness,
+                    interactableObjects,
+                    manager,
+                    labelFontSize,
+                    showLabels
+                );
             });
         }
 
@@ -742,7 +756,7 @@ jQuery(document).ready(function ($) {
         }
     }
 
-    function addArtworkPlane(scene, art, roomW, roomH, roomD, artLights, initialBrightness, interactableObjects, manager) {
+    function addArtworkPlane(scene, art, roomW, roomH, roomD, artLights, initialBrightness, interactableObjects, manager, labelFontSize, showLabels) {
         let x = art.x;
         let y = art.y;
         let z = art.z;
@@ -891,6 +905,31 @@ jQuery(document).ready(function ($) {
                     group.add(rightMesh);
                 }
 
+                if (art.title && showLabels) {
+                    // 作品の幅に合わせてラベルを作成
+                    var labelData = createLabelMesh(art.title, baseWidth * 0.5, labelFontSize);
+
+                    if (labelData) {
+                        var labelMesh = labelData.mesh;
+
+                        // 配置位置の計算
+                        // 作品の中心(Y=0)から、作品の高さ半分 + 隙間 + ラベル高さ半分 下げる
+                        var gap = 0.05; // 隙間 5cm
+
+                        // フレームがある場合、フレームの厚みを考慮してラベル位置を調整
+                        var frameThick = frameType !== 'none' ? (frameType === 'white' ? 0.06 : 0.05) : 0;
+                        var yOffset = frameThick;
+
+                        var yPos = -(baseHeight / 2) - yOffset - gap - labelData.height / 2;
+
+                        labelMesh.position.y = yPos;
+                        // フレームより少し手前に出さないと埋もれる可能性があるため調整
+                        labelMesh.position.z = 0.04;
+
+                        group.add(labelMesh);
+                    }
+                }
+
                 if (art.scale && typeof art.scale === 'object') {
                     const s = art.scale.x ?? 1;
                     group.scale.set(s, s, s);
@@ -966,5 +1005,64 @@ jQuery(document).ready(function ($) {
         scene.add(spotLight);
         scene.add(spotLight.target);
         if (artLights) artLights.push(spotLight);
+    }
+
+    /**
+     * タイトルラベルのMeshを作成する関数（再修正版）
+     * @param {string} title - タイトル文字
+     * @param {number} width - プレート幅
+     * @param {number} fontSizePercent - フォントサイズ係数 (10-80程度)
+     */
+    function createLabelMesh(title, width, fontSizePercent) {
+        if (!title) return null;
+
+        var plateW = width;
+        var plateH = 0.15;
+        var plateD = 0.02;
+
+        // Canvasサイズ計算
+        var canvasW = 512;
+        var canvasH = Math.round(canvasW * (plateH / plateW));
+        if (canvasH < 64) {
+            var scale = 64 / canvasH;
+            canvasW = Math.round(canvasW * scale);
+            canvasH = 64;
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = canvasW;
+        canvas.height = canvasH;
+        var ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvasW, canvasH);
+
+        // ★修正点1: 引数の fontSizePercent を使ってサイズを決定 (デフォルト30)
+        var percent = fontSizePercent || 30;
+        var fontSize = Math.floor(canvasH * (percent / 100));
+        if (fontSize < 10) fontSize = 10;
+
+        // ★修正点2: 太さを 'bold' から 'normal' (または '500') に変更
+        ctx.font = 'normal ' + fontSize + 'px sans-serif';
+
+        ctx.fillStyle = '#000000';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.fillText(title, canvasW / 2, canvasH / 2);
+
+        var texture = new THREE.CanvasTexture(canvas);
+        texture.encoding = THREE.sRGBEncoding;
+        texture.minFilter = THREE.LinearFilter;
+
+        var matWhite = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+        var matText = new THREE.MeshStandardMaterial({ map: texture, color: 0xffffff, roughness: 0.5 });
+
+        var materials = [matWhite, matWhite, matWhite, matWhite, matText, matWhite];
+
+        var geo = new THREE.BoxGeometry(plateW, plateH, plateD);
+        var mesh = new THREE.Mesh(geo, materials);
+
+        return { mesh: mesh, height: plateH };
     }
 });
