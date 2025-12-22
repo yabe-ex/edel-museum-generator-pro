@@ -12,6 +12,7 @@ class EdelMuseumGeneratorFrontPro {
         $is_edit_mode = isset($_GET['museum_edit']) && $_GET['museum_edit'] === '1';
         $version = (defined('EDEL_MUSEUM_GENERATOR_PRO_DEVELOP') && true === EDEL_MUSEUM_GENERATOR_PRO_DEVELOP) ? time() : EDEL_MUSEUM_GENERATOR_PRO_VERSION;
 
+        // ローカルファイルの読み込み
         wp_enqueue_script('three', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/three.min.js', array(), '0.128.0', true);
         wp_enqueue_script('three-gltf-loader', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/GLTFLoader.js', array('three'), '0.128.0', true);
         wp_enqueue_script('nipplejs', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/nipplejs.min.js', array(), '0.10.1', true);
@@ -27,18 +28,16 @@ class EdelMuseumGeneratorFrontPro {
             'txt_reset' => __('Reset', 'edel-museum-generator'),
             'txt_confirm_reset' => __('Are you sure you want to reset layout?', 'edel-museum-generator'),
             'txt_reset_notification' => __('Layout reset to defaults. Please click "Save Layout" to apply.', 'edel-museum-generator'),
-            // Editor Labels
+            'txt_rotate_label' => __('Rotate:', 'edel-museum-generator'),
             'txt_move_t'   => __('Move (T)', 'edel-museum-generator'),
             'txt_rotate_r' => __('Rotate (R)', 'edel-museum-generator'),
             'txt_loading_assets' => __('Loading Assets...', 'edel-museum-generator'),
-            // Viewer Controls
             'txt_controls_title' => __('Controls', 'edel-museum-generator'),
             'txt_move'   => __('Move:', 'edel-museum-generator'),
             'txt_height' => __('Height:', 'edel-museum-generator'),
             'txt_look'   => __('Look:', 'edel-museum-generator'),
             'txt_cursor' => __('Cursor:', 'edel-museum-generator'),
             'txt_esc_desc' => __('ESC (Back / Unlock)', 'edel-museum-generator'),
-            // Viewer Settings
             'txt_room'      => __('Room', 'edel-museum-generator'),
             'txt_spotlight' => __('Spotlight', 'edel-museum-generator'),
             'txt_view_details' => __('View Details', 'edel-museum-generator'),
@@ -46,16 +45,12 @@ class EdelMuseumGeneratorFrontPro {
         );
 
         if ($is_edit_mode) {
-            // ローカル: OrbitControls.js
             wp_enqueue_script('three-orbitcontrols', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/OrbitControls.js', array('three'), '0.128.0', true);
-
-            // ローカル: TransformControls.js
             wp_enqueue_script('three-transformcontrols', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/TransformControls.js', array('three'), '0.128.0', true);
 
             wp_enqueue_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-editor', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/edel-editor.js', array('jquery', 'three', 'three-orbitcontrols', 'three-transformcontrols', 'three-gltf-loader'), $version, true);
             wp_localize_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-editor', 'edel_vars', $localize_data);
         } else {
-            // ローカル: PointerLockControls.js
             wp_enqueue_script('three-pointerlockcontrols', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/PointerLockControls.js', array('three'), '0.128.0', true);
 
             wp_enqueue_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-viewer', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/edel-viewer.js', array('jquery', 'three', 'three-pointerlockcontrols', 'three-gltf-loader', 'nipplejs'), $version, true);
@@ -74,7 +69,6 @@ class EdelMuseumGeneratorFrontPro {
         $room_d = 16;
         $num_pillars = intval($meta['pillars']);
 
-        // --- 柱のサイズ計算 ---
         $p_w_pct = isset($meta['pillar_width_pct']) ? intval($meta['pillar_width_pct']) : 20;
         $p_d_pct = isset($meta['pillar_depth_pct']) ? intval($meta['pillar_depth_pct']) : 20;
 
@@ -88,7 +82,6 @@ class EdelMuseumGeneratorFrontPro {
         $pillar_w = $room_w * ($p_w_pct / 100);
         $pillar_d = $room_d * ($p_d_pct / 100);
 
-        // --- 柱の配置位置 X 計算 ---
         if (isset($meta['pillar_placement_x']) && $meta['pillar_placement_x'] !== '') {
             $place_pct = intval($meta['pillar_placement_x']);
         } else {
@@ -277,14 +270,11 @@ class EdelMuseumGeneratorFrontPro {
                 $layout['room']['room_brightness'] = isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2';
                 $layout['room']['spot_brightness'] = isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0';
                 $layout['room']['movement_speed'] = isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0';
-
-                // ★追加: スタート位置とラベル設定
                 $layout['room']['start_position'] = isset($meta['start_position']) ? $meta['start_position'] : 'south';
                 $layout['room']['label_font_size'] = isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30;
                 $layout['room']['label_display']   = isset($meta['label_display']) ? ($meta['label_display'] === '1') : true;
             }
 
-            // 柱情報の強制上書き
             $fresh_layout = $this->build_layout_from_exhibition($exhibition_id);
             if ($fresh_layout && isset($fresh_layout['pillars'])) {
                 $layout['pillars'] = $fresh_layout['pillars'];
@@ -356,7 +346,7 @@ class EdelMuseumGeneratorFrontPro {
                 <div style="background: #333; color: #fff; padding: 10px; display:flex; gap:15px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <div id="museum-scale-wrapper" style="display:none; align-items:center; gap:8px; background:#444; padding:2px 8px; border-radius:4px;">
-                            <label for="scale-slider" style="font-size:13px;"><?php _e('Scale:', 'edel-museum-generator'); ?></label>
+                            <label for="scale-slider" style="font-size:13px; color:#fff; white-space:nowrap;"><?php _e('Scale:', 'edel-museum-generator'); ?></label>
                             <input type="range" id="scale-slider" min="0.5" max="3.0" step="0.1" value="1.0">
                             <span id="scale-value" style="font-size:12px; min-width:30px;">1.0x</span>
                         </div>

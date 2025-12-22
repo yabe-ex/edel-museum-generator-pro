@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Edel Museum Generator\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-12 14:36+0000\n"
-"PO-Revision-Date: 2025-12-22 09:17+0000\n"
+"PO-Revision-Date: 2025-12-22 14:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: 日本語\n"
 "Language: ja\n"
@@ -42,7 +42,7 @@ msgstr "新規展示室を作成"
 msgid "Adjust Brightness and <strong>Movement Speed</strong>."
 msgstr "明るさと<strong>移動速度</strong>を調整します。"
 
-#: inc/class-front.php:28
+#: inc/class-front.php:29
 msgid "Are you sure you want to reset layout?"
 msgstr "本当に配置をリセットしますか？"
 
@@ -54,7 +54,7 @@ msgstr "作品"
 msgid "Artwork Options"
 msgstr "作品オプション"
 
-#: inc/class-front.php:319
+#: inc/class-front.php:322
 msgid "Back to Viewer"
 msgstr "閲覧モードに戻る"
 
@@ -103,7 +103,7 @@ msgstr "閉じる"
 msgid "Configure the viewing experience:"
 msgstr "鑑賞体験の設定:"
 
-#: inc/class-front.php:35
+#: inc/class-front.php:40
 msgid "Controls"
 msgstr "操作"
 
@@ -123,7 +123,7 @@ msgstr "クリップボードにコピー"
 msgid "Create a room and decide which artworks to place on which walls."
 msgstr "部屋を作成し、どの壁にどの作品を配置するかを決定します。"
 
-#: inc/class-front.php:39
+#: inc/class-front.php:44
 msgid "Cursor:"
 msgstr "カーソル:"
 
@@ -193,19 +193,19 @@ msgid ""
 "in the popup)."
 msgstr "<strong>タイトル</strong>と<strong>説明</strong>を入力します（ポップアップに表示されます）。"
 
-#: inc/class-front.php:26
+#: inc/class-front.php:27
 msgid "Error"
 msgstr "エラー"
 
-#: inc/class-front.php:312
+#: inc/class-front.php:315
 msgid "Error: Data not found."
 msgstr "エラー: データが見つかりません。"
 
-#: inc/class-front.php:259
+#: inc/class-front.php:262
 msgid "Error: Please specify Exhibition ID."
 msgstr "エラー: 展示室IDを指定してください。"
 
-#: inc/class-front.php:40
+#: inc/class-front.php:45
 msgid "ESC (Back / Unlock)"
 msgstr "ESC (戻る・解除)"
 
@@ -268,7 +268,7 @@ msgstr "<strong>Exhibition Settings > Add New Exhibition</strong> に移動し�
 msgid "Go to <strong>Museum Artworks > Add New Artwork</strong>."
 msgstr "<strong>Museum Artworks > Add New Artwork</strong> に移動します。"
 
-#: inc/class-front.php:37
+#: inc/class-front.php:42
 msgid "Height:"
 msgstr "高さ:"
 
@@ -284,7 +284,7 @@ msgstr "ラベルのフォントサイズ (%)"
 msgid "Labels:"
 msgstr "ラベル:"
 
-#: inc/class-front.php:29
+#: inc/class-front.php:30
 msgid "Layout reset to defaults. Please click \"Save Layout\" to apply."
 msgstr "初期配置に戻しました。「レイアウトを保存」を押して確定してください。"
 
@@ -300,15 +300,15 @@ msgstr "リンクURL (任意):"
 msgid "Link URL:"
 msgstr "リンクURL:"
 
-#: inc/class-front.php:33
+#: inc/class-front.php:38
 msgid "Loading Assets..."
 msgstr "アセットを読み込み中..."
 
-#: inc/class-front.php:45
+#: inc/class-front.php:50
 msgid "Loading..."
 msgstr "読み込み中..."
 
-#: inc/class-front.php:38
+#: inc/class-front.php:43
 msgid "Look:"
 msgstr "視点:"
 
@@ -316,7 +316,7 @@ msgstr "視点:"
 msgid "Missing data"
 msgstr "データが不足しています"
 
-#: inc/class-front.php:31
+#: inc/class-front.php:36
 msgid "Move (T)"
 msgstr "移動 (T)"
 
@@ -324,7 +324,7 @@ msgstr "移動 (T)"
 msgid "Move (T):"
 msgstr "移動 (T):"
 
-#: inc/class-front.php:36
+#: inc/class-front.php:41
 msgid "Move:"
 msgstr "移動:"
 
@@ -442,11 +442,11 @@ msgid ""
 "editing the exhibition)."
 msgstr "<strong>123</strong> を展示ID（展示の編集画面のURLに含まれています）に置き換えてください。"
 
-#: inc/class-front.php:27
+#: inc/class-front.php:28
 msgid "Reset"
 msgstr "リセット"
 
-#: inc/class-front.php:365
+#: inc/class-front.php:368
 msgid "Reset Layout"
 msgstr "配置リセット"
 
@@ -454,7 +454,7 @@ msgstr "配置リセット"
 msgid "Reset to default layout."
 msgstr "初期配置に戻しました。"
 
-#: inc/class-front.php:42
+#: inc/class-front.php:47
 msgid "Room"
 msgstr "Room"
 
@@ -466,7 +466,7 @@ msgstr "部屋の明るさ"
 msgid "Room Settings & Artwork Placement"
 msgstr "ルーム設定 & 作品配置"
 
-#: inc/class-front.php:32
+#: inc/class-front.php:37
 msgid "Rotate (R)"
 msgstr "回転 (R)"
 
@@ -474,11 +474,15 @@ msgstr "回転 (R)"
 msgid "Rotate (R):"
 msgstr "回転 (R):"
 
+#: inc/class-front.php:33
+msgid "Rotate:"
+msgstr "回転:"
+
 #: inc/class-admin.php:173
 msgid "Save draft to generate shortcode."
 msgstr "下書きを保存するとショートコードが生成されます。"
 
-#: inc/class-front.php:366
+#: inc/class-front.php:369
 msgid "Save Layout"
 msgstr "レイアウトを保存"
 
@@ -486,11 +490,11 @@ msgstr "レイアウトを保存"
 msgid "Saved successfully!"
 msgstr "保存しました！"
 
-#: inc/class-front.php:25
+#: inc/class-front.php:26
 msgid "Saved!"
 msgstr "保存しました！"
 
-#: inc/class-front.php:359 inc/class-admin.php:132
+#: inc/class-front.php:362 inc/class-admin.php:132
 msgid "Scale:"
 msgstr "サイズ:"
 
@@ -583,7 +587,7 @@ msgstr "南 (デフォルト)"
 msgid "South Wall"
 msgstr "南側の壁"
 
-#: inc/class-front.php:43
+#: inc/class-front.php:48
 msgid "Spotlight"
 msgstr "Spotlight"
 
@@ -625,7 +629,7 @@ msgstr "構造"
 msgid "Structure:"
 msgstr "構造:"
 
-#: inc/class-front.php:319
+#: inc/class-front.php:322
 msgid "Switch to Editor"
 msgstr "編集モードに切り替え"
 
@@ -676,7 +680,7 @@ msgstr "この画像を利用"
 msgid "Use this model"
 msgstr "このモデルを使用"
 
-#: inc/class-front.php:44 inc/class-front.php:347
+#: inc/class-front.php:49 inc/class-front.php:350
 msgid "View Details"
 msgstr "詳細を見る"
 

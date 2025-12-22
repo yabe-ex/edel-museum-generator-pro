@@ -92,7 +92,7 @@ jQuery(document).ready(function ($) {
         }
     }, 5000);
 
-    // --- UI Layout & Styling (Theme Conflict Fixes) ---
+    // --- UI Layout & Styling ---
 
     var baseBtnStyle = {
         display: 'inline-flex',
@@ -130,13 +130,9 @@ jQuery(document).ready(function ($) {
         borderColor: '#d63638'
     };
 
-    // --- ★修正: 切り替えボタンのスタイル適用 ---
-    // .find()を使って、divの中にあるリンクも確実に見つける
     var $switchBtn = $container.find('a.button');
 
     if ($switchBtn.length) {
-        // ボタンが見つかった場合、スタイルを強制適用
-        // ポジション指定(top/right)はHTML側のdivで行われているため、ここでは見た目だけを整える
         $switchBtn.css(
             $.extend({}, baseBtnStyle, {
                 zIndex: '1001',
@@ -147,7 +143,6 @@ jQuery(document).ready(function ($) {
             })
         );
 
-        // ホバー効果
         $switchBtn.hover(
             function () {
                 $(this).css({ backgroundColor: '#f0f0f1', color: '#135e96' });
@@ -158,7 +153,6 @@ jQuery(document).ready(function ($) {
         );
     }
 
-    // 既存ボタン取得
     var $saveBtn = $container.find('#museum-save');
     var $clearBtn = $container.find('#museum-clear');
     var $scaleSlider = $container.find('#scale-slider');
@@ -191,7 +185,8 @@ jQuery(document).ready(function ($) {
         borderRadius: '4px',
         marginLeft: '10px'
     });
-    var $rotateLabel = $('<label>').css({ fontSize: '13px', color: '#fff' }).text('Rotate:');
+
+    var $rotateLabel = $('<label>').css({ fontSize: '13px', color: '#fff', whiteSpace: 'nowrap' }).text(edel_vars.txt_rotate_label);
     var $rotateSlider = $('<input>').attr({ type: 'range', id: 'rotate-slider', min: '-180', max: '180', step: '15', value: '0' });
     var $rotateValue = $('<span>').attr('id', 'rotate-value').css({ fontSize: '12px', minWidth: '35px', color: '#fff' }).text('0°');
     $rotateWrapper.append($rotateLabel).append($rotateSlider).append($rotateValue);
@@ -680,12 +675,10 @@ jQuery(document).ready(function ($) {
 
     // --- Save Button ---
     $saveBtn.on('click', function () {
-        // ... (保存処理は変更なし) ...
         if (!postId) return;
         var newLayout = JSON.parse(JSON.stringify(layout));
         artworks.forEach(function (group) {
             var idx = group.userData.index;
-            // エラー回避: 配列が存在するか確認
             if (newLayout.artworks[idx]) {
                 newLayout.artworks[idx].x = group.position.x;
                 newLayout.artworks[idx].y = group.position.y;
@@ -717,14 +710,12 @@ jQuery(document).ready(function ($) {
         });
     });
 
-    // ★修正: リセットボタンの挙動変更
     $clearBtn.on('click', function () {
         if (!postId || !confirm(edel_vars.txt_confirm_reset)) return;
 
         var originalText = $clearBtn.text();
         $clearBtn.prop('disabled', true).text('Restoring...');
 
-        // Ajaxで初期配置データを取得
         $.ajax({
             url: edel_vars.ajaxurl,
             type: 'POST',
@@ -733,19 +724,15 @@ jQuery(document).ready(function ($) {
                 $clearBtn.prop('disabled', false).text(originalText);
 
                 if (res.success && res.data && res.data.artworks) {
-                    // レイアウトデータを上書き（メモリ上のみ）
                     layout = res.data;
 
-                    // 画面上のアートワークを初期位置に戻す
                     artworks.forEach(function (group) {
                         var idx = group.userData.index;
                         var defaultArt = layout.artworks[idx];
 
                         if (defaultArt) {
-                            // 1. 位置のリセット
                             group.position.set(defaultArt.x, defaultArt.y, defaultArt.z);
 
-                            // 2. サイズのリセット (userData.baseScaleを使用)
                             if (group.userData.baseScale) {
                                 var s = group.userData.baseScale;
                                 group.scale.set(s, s, s);
@@ -753,7 +740,6 @@ jQuery(document).ready(function ($) {
                                 group.scale.set(1, 1, 1);
                             }
 
-                            // 3. 回転のリセット (壁の向きに合わせて計算)
                             var rotY = 0;
                             var wall = defaultArt.wall || 'north';
                             var isPillar = wall.includes('_');
@@ -777,10 +763,7 @@ jQuery(document).ready(function ($) {
                         }
                     });
 
-                    // 選択解除
                     deselectArtwork();
-
-                    // 通知を表示
                     showNotification(edel_vars.txt_reset_notification);
                 } else {
                     alert(edel_vars.txt_error);
