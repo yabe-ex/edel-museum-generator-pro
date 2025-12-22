@@ -545,7 +545,7 @@ class EdelMuseumGeneratorAdminPro {
             }
         </style>
 
-        <div class="edel-section-title"><?php _e('Lighting & Movement', 'edel-museum-generator'); ?></div>
+        <!-- <div class="edel-section-title"><?php _e('Lighting & Movement', 'edel-museum-generator'); ?></div> -->
         <table class="edel-meta-table">
             <tr>
                 <th><?php _e('Room Brightness', 'edel-museum-generator'); ?></th>
