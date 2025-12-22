@@ -1,4 +1,6 @@
 jQuery(document).ready(function ($) {
+    console.log('Edel Museum: Script loaded.');
+
     $('.ai-museum-container').each(function () {
         initMuseum(this);
     });
@@ -23,7 +25,7 @@ jQuery(document).ready(function ($) {
 
         var canvas = $container.find('.ai-museum-canvas')[0];
 
-        // --- Loading ---
+        // --- Loading Screen ---
         var $loadingScreen = $('<div>')
             .attr('id', 'ai-loading-screen')
             .css({
@@ -77,14 +79,12 @@ jQuery(document).ready(function ($) {
         manager.onLoad = function () {
             $loadingScreen.fadeOut(500);
         };
-        manager.onError = function (url) {
-            console.error('Error loading ' + url);
-        };
+
         setTimeout(function () {
             if ($loadingScreen.is(':visible')) $loadingScreen.fadeOut(500);
         }, 5000);
 
-        // --- UI Styling Fix (Theme Conflict Prevention) ---
+        // --- UI Styling ---
         var baseBtnStyle = {
             display: 'inline-flex',
             alignItems: 'center',
@@ -99,36 +99,22 @@ jQuery(document).ready(function ($) {
             borderRadius: '4px',
             cursor: 'pointer',
             textDecoration: 'none',
-            transition: 'all 0.2s',
-            boxSizing: 'border-box',
-            minHeight: '32px',
-            verticalAlign: 'middle',
-            appearance: 'none',
-            boxShadow: 'none',
-            margin: '0',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
             width: 'auto',
             height: 'auto'
         };
 
-        // 「編集モードに切り替え」ボタン等を見つけてスタイル適用
-        // divでラップされている場合も含めて探索
         var $buttons = $container.find('a.button');
         $buttons.each(function () {
-            var $btn = $(this);
-            // 基本スタイル適用
-            $btn.css(baseBtnStyle);
-
-            // Viewer右上のボタンの場合、位置は親divで決まるため、ここでは見た目だけ整える
-            // ホバー効果
-            $btn.hover(
-                function () {
-                    $(this).css({ backgroundColor: '#f0f0f1', color: '#135e96' });
-                },
-                function () {
-                    $(this).css({ backgroundColor: '#f6f7f7', color: '#2271b1' });
-                }
-            );
+            $(this)
+                .css(baseBtnStyle)
+                .hover(
+                    function () {
+                        $(this).css({ backgroundColor: '#f0f0f1', color: '#135e96' });
+                    },
+                    function () {
+                        $(this).css({ backgroundColor: '#f6f7f7', color: '#2271b1' });
+                    }
+                );
         });
 
         // UI Elements
@@ -139,10 +125,19 @@ jQuery(document).ready(function ($) {
         var $modalTitle = $container.find('#ai-modal-title');
         var $modalDesc = $container.find('#ai-modal-desc');
         var $modalLink = $container.find('#ai-modal-link');
-        var $joystickZone = $container.find('#ai-joystick-zone');
+        var $joystickZone = null;
 
         var width = $container.width();
         var height = 500;
+
+        function checkMobileMode() {
+            var isSmallScreen = window.innerWidth <= 768;
+            var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            console.log('Edel Museum: Width=' + window.innerWidth + ', Touch=' + isTouch + ' => MobileMode=' + (isSmallScreen || isTouch));
+            return isSmallScreen || isTouch;
+        }
+
+        var isMobileMode = checkMobileMode();
 
         const scene = new THREE.Scene();
         const room = layout.room || {};
@@ -165,33 +160,26 @@ jQuery(document).ready(function ($) {
         const labelFontSize = parseInt(room.label_font_size) || 30;
         const showLabels = room.label_display !== false;
 
-        let currentEyeHeight = 1.6;
+        let currentEyeHeight = 2.0;
         const floorY = -roomH / 2;
 
         const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
-
         const startPos = room.start_position || 'south';
         const margin = 0.5;
 
         if (startPos === 'north') {
-            // 北側スタート: Z = -roomD/2 (奥), 南(+Z)を向く
             camera.position.set(0, floorY + currentEyeHeight, -roomD / 2 + margin);
-            camera.rotation.y = Math.PI; // 180度回転
+            camera.rotation.y = Math.PI;
         } else if (startPos === 'east') {
-            // 東側スタート: X = +roomW/2 (右), 西(-X)を向く
             camera.position.set(roomW / 2 - margin, floorY + currentEyeHeight, 0);
-            camera.rotation.y = Math.PI / 2; // +90度回転
+            camera.rotation.y = Math.PI / 2;
         } else if (startPos === 'west') {
-            // 西側スタート: X = -roomW/2 (左), 東(+X)を向く
             camera.position.set(-roomW / 2 + margin, floorY + currentEyeHeight, 0);
-            camera.rotation.y = -Math.PI / 2; // -90度回転
+            camera.rotation.y = -Math.PI / 2;
         } else {
-            // 南側スタート (デフォルト): Z = +roomD/2 (手前), 北(-Z)を向く
             camera.position.set(0, floorY + currentEyeHeight, roomD / 2 - margin);
-            camera.rotation.y = 0; // 回転なし
+            camera.rotation.y = 0;
         }
-
-        // camera.position.set(0, floorY + currentEyeHeight, roomD / 2 - 0.5);
 
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
         renderer.setSize(width, height);
@@ -200,28 +188,23 @@ jQuery(document).ready(function ($) {
 
         const baseAmbient = new THREE.AmbientLight(0xffffff, 0.1);
         scene.add(baseAmbient);
-
         const roomLights = [];
         const roomAmbient = new THREE.AmbientLight(0xffffff, 0.75);
         roomAmbient.userData.baseIntensity = 0.75;
         scene.add(roomAmbient);
         roomLights.push(roomAmbient);
-
         const dir1 = new THREE.DirectionalLight(0xffffff, 0.6);
         dir1.userData.baseIntensity = 0.6;
         dir1.position.set(5, 10, 7);
         dir1.castShadow = true;
         scene.add(dir1);
         roomLights.push(dir1);
-
         const dir2 = new THREE.DirectionalLight(0xffffff, 0.4);
         dir2.userData.baseIntensity = 0.4;
         dir2.position.set(-5, 5, -5);
         scene.add(dir2);
         roomLights.push(dir2);
-
         const artLights = [];
-
         scene.fog = new THREE.FogExp2(0xaaaaaa, 0.015);
 
         createRoom(
@@ -259,7 +242,7 @@ jQuery(document).ready(function ($) {
             });
         }
 
-        // --- Help UI ---
+        // --- Help & Settings UI ---
         var $helpContainer = $('<div>')
             .css({
                 position: 'absolute',
@@ -320,18 +303,15 @@ jQuery(document).ready(function ($) {
                 fontWeight: 'bold'
             })
             .appendTo($helpContainer);
-
         $helpBtn.on('click', function (e) {
             e.stopPropagation();
             $helpContent.slideToggle(200);
             if ($uiContainer) $uiContainer.fadeToggle(200);
         });
-
         $helpContainer.on('mousedown click', function (e) {
             e.stopPropagation();
         });
 
-        // --- Settings UI ---
         var $uiContainer = $('<div>')
             .css({
                 position: 'absolute',
@@ -369,28 +349,16 @@ jQuery(document).ready(function ($) {
         $spotGroup.append($spotSlider);
         $uiContainer.append($spotGroup);
 
-        var updateRoomLights = function (val) {
-            roomLights.forEach((l) => (l.intensity = l.userData.baseIntensity * val));
-        };
         $roomSlider.on('input', function () {
-            updateRoomLights(parseFloat($(this).val()));
+            roomLights.forEach((l) => (l.intensity = l.userData.baseIntensity * parseFloat($(this).val())));
         });
-        var updateSpotLights = function (val) {
-            artLights.forEach((l) => (l.intensity = l.userData.baseIntensity * val));
-        };
         $spotSlider.on('input', function () {
-            updateSpotLights(parseFloat($(this).val()));
+            artLights.forEach((l) => (l.intensity = l.userData.baseIntensity * parseFloat($(this).val())));
         });
-        updateRoomLights(defaultRoomBrightness);
+        roomLights.forEach((l) => (l.intensity = l.userData.baseIntensity * defaultRoomBrightness));
         $uiContainer.find('input').on('mousedown click touchstart', function (e) {
             e.stopPropagation();
         });
-        var toggleSlider = function ($slider, func) {
-            var val = parseFloat($slider.val());
-            var n = val > 0 ? 0 : 1.0;
-            $slider.val(n);
-            func(n);
-        };
 
         const controls = new THREE.PointerLockControls(camera, renderer.domElement);
         scene.add(controls.getObject());
@@ -398,9 +366,29 @@ jQuery(document).ready(function ($) {
         const center = new THREE.Vector2(0, 0);
         let hoveredObj = null;
 
+        function openModal(data) {
+            $modalImage.attr('src', data.image || '');
+            if (!data.image) $modalImage.hide();
+            else $modalImage.show();
+            $modalTitle.text(data.title || 'No Title');
+            $modalDesc.text(data.desc || '');
+            $modalLink.text(edel_vars.txt_view_details);
+            if (data.link) $modalLink.attr('href', data.link).show();
+            else $modalLink.hide();
+            $modalOverlay.css('display', 'flex');
+        }
+        function closeModal() {
+            $modalOverlay.hide();
+            if (!isMobileMode) controls.lock();
+        }
+        $modalClose.on('click', closeModal);
+        $modalOverlay.on('click', function (e) {
+            if (e.target === this) closeModal();
+        });
+
         $container.on('click', 'canvas', function () {
             if ($modalOverlay.css('display') === 'flex') return;
-            if (!isTouchDevice()) {
+            if (!isMobileMode) {
                 if (controls.isLocked) {
                     if (hoveredObj) {
                         openModal(hoveredObj.userData);
@@ -410,40 +398,8 @@ jQuery(document).ready(function ($) {
                     controls.lock();
                 }
             } else {
-                if (hoveredObj) {
-                    openModal(hoveredObj.userData);
-                }
+                if (hoveredObj) openModal(hoveredObj.userData);
             }
-        });
-
-        function isTouchDevice() {
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        }
-
-        function openModal(data) {
-            $modalImage.attr('src', data.image || '');
-            if (!data.image) $modalImage.hide();
-            else $modalImage.show();
-            $modalTitle.text(data.title || 'No Title');
-            $modalDesc.text(data.desc || '');
-            $modalLink.text(edel_vars.txt_view_details);
-            if (data.link) {
-                $modalLink.attr('href', data.link).show();
-            } else {
-                $modalLink.hide();
-            }
-            $modalOverlay.css('display', 'flex');
-        }
-
-        function closeModal() {
-            $modalOverlay.hide();
-            if (!isTouchDevice()) controls.lock();
-        }
-        $modalClose.on('click', function () {
-            closeModal();
-        });
-        $modalOverlay.on('click', function (e) {
-            if (e.target === this) closeModal();
         });
 
         const clock = new THREE.Clock();
@@ -451,8 +407,28 @@ jQuery(document).ready(function ($) {
         const direction = new THREE.Vector3();
         const move = { forward: false, back: false, left: false, right: false, up: false, down: false };
 
-        if (isTouchDevice()) {
+        if (isMobileMode) {
+            console.log('Edel Museum: Initializing Mobile Controls (Joystick & Drag-Look)...');
             $helpContainer.hide();
+
+            $joystickZone = $container.find('.ai-joystick-zone');
+
+            if (!$joystickZone.length) {
+                console.log('Edel Museum: .ai-joystick-zone not found. Creating it dynamically.');
+                $joystickZone = $('<div>').addClass('ai-joystick-zone').appendTo($container);
+            }
+
+            $joystickZone.css({
+                display: 'block',
+                position: 'absolute',
+                bottom: '40px',
+                left: '20px',
+                width: '100px',
+                height: '100px',
+                zIndex: '9999',
+                touchAction: 'none'
+            });
+
             if (typeof nipplejs !== 'undefined') {
                 var joystick = nipplejs.create({
                     zone: $joystickZone[0],
@@ -472,38 +448,82 @@ jQuery(document).ready(function ($) {
                 joystick.on('end', function () {
                     move.forward = move.back = move.left = move.right = false;
                 });
+            } else {
+                console.error('Edel Museum: nipplejs library is NOT loaded.');
+                $('<div>')
+                    .css({
+                        position: 'absolute',
+                        top: '10px',
+                        left: '10px',
+                        background: 'red',
+                        color: '#fff',
+                        padding: '5px',
+                        zIndex: 10000
+                    })
+                    .text('Error: Joystick Library Missing')
+                    .appendTo($container);
             }
-            let touchStartX = 0,
-                touchStartY = 0;
+
+            let isDragging = false;
+            let startX = 0,
+                startY = 0;
             const lookSpeed = 0.004;
+
             canvas.addEventListener(
                 'touchstart',
                 function (e) {
-                    if (e.touches.length === 1 && !$(e.target).closest('#ai-joystick-zone').length) {
-                        touchStartX = e.touches[0].pageX;
-                        touchStartY = e.touches[0].pageY;
+                    if (e.touches.length === 1 && !$(e.target).closest('.ai-joystick-zone').length) {
+                        startX = e.touches[0].pageX;
+                        startY = e.touches[0].pageY;
                     }
                 },
                 { passive: true }
             );
+
             canvas.addEventListener(
                 'touchmove',
                 function (e) {
-                    if (e.touches.length === 1 && !$(e.target).closest('#ai-joystick-zone').length) {
-                        const deltaX = e.touches[0].pageX - touchStartX;
-                        const deltaY = e.touches[0].pageY - touchStartY;
+                    if (e.touches.length === 1 && !$(e.target).closest('.ai-joystick-zone').length) {
+                        const deltaX = e.touches[0].pageX - startX;
+                        const deltaY = e.touches[0].pageY - startY;
                         camera.rotation.y -= deltaX * lookSpeed;
                         camera.rotation.x -= deltaY * lookSpeed;
                         camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
-                        touchStartX = e.touches[0].pageX;
-                        touchStartY = e.touches[0].pageY;
+                        startX = e.touches[0].pageX;
+                        startY = e.touches[0].pageY;
                     }
                 },
                 { passive: true }
             );
+
+            canvas.addEventListener('mousedown', function (e) {
+                if ($(e.target).closest('.ai-joystick-zone').length) return;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+            });
+
+            window.addEventListener('mousemove', function (e) {
+                if (!isDragging) return;
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                camera.rotation.y -= deltaX * lookSpeed;
+                camera.rotation.x -= deltaY * lookSpeed;
+                camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+                startX = e.clientX;
+                startY = e.clientY;
+            });
+
+            window.addEventListener('mouseup', function () {
+                isDragging = false;
+            });
+        } else {
+            console.log('Edel Museum: Initializing Desktop Controls (PointerLock).');
+            document.addEventListener('keydown', onKeyDown);
+            document.addEventListener('keyup', onKeyUp);
         }
 
-        const onKeyDown = (event) => {
+        function onKeyDown(event) {
             switch (event.code) {
                 case 'ArrowUp':
                 case 'KeyW':
@@ -534,8 +554,8 @@ jQuery(document).ready(function ($) {
                     toggleSlider($spotSlider, updateSpotLights);
                     break;
             }
-        };
-        const onKeyUp = (event) => {
+        }
+        function onKeyUp(event) {
             switch (event.code) {
                 case 'ArrowUp':
                 case 'KeyW':
@@ -560,9 +580,11 @@ jQuery(document).ready(function ($) {
                     move.down = false;
                     break;
             }
-        };
-        document.addEventListener('keydown', onKeyDown);
-        document.addEventListener('keyup', onKeyUp);
+        }
+        if (isMobileMode) {
+            document.addEventListener('keydown', onKeyDown);
+            document.addEventListener('keyup', onKeyUp);
+        }
 
         function checkCollision(position) {
             const playerRadius = 0.5;
@@ -581,7 +603,8 @@ jQuery(document).ready(function ($) {
 
         function animate() {
             requestAnimationFrame(animate);
-            if (controls.isLocked === true || isTouchDevice()) {
+
+            if ((!isMobileMode && controls.isLocked === true) || isMobileMode) {
                 const delta = clock.getDelta();
                 velocity.x -= velocity.x * 10.0 * delta;
                 velocity.z -= velocity.z * 10.0 * delta;
@@ -606,9 +629,11 @@ jQuery(document).ready(function ($) {
                     velocity.z = 0;
                 }
 
+                // ★修正: 高さの計算ロジックを復活
                 const verticalSpeed = 2.0;
                 if (move.up) currentEyeHeight += verticalSpeed * delta;
                 if (move.down) currentEyeHeight -= verticalSpeed * delta;
+
                 if (currentEyeHeight < 0.5) currentEyeHeight = 0.5;
                 if (currentEyeHeight > roomH - 0.5) currentEyeHeight = roomH - 0.5;
                 const obj = controls.getObject();
@@ -619,28 +644,27 @@ jQuery(document).ready(function ($) {
                 if (obj.position.z < -roomD / 2 + margin) obj.position.z = -roomD / 2 + margin;
                 obj.position.y = floorY + currentEyeHeight;
             }
+
             raycaster.setFromCamera(center, camera);
             raycaster.far = 5.0;
 
-            // ★重要修正: interactableObjectsをターゲットにし、再帰的にチェック
             const hits = raycaster.intersectObjects(interactableObjects, true);
             if (hits.length > 0) {
                 let target = hits[0].object;
-                // 親をたどってタイトルデータを持つグループを探す
                 while (target.parent && !target.userData.title && target.parent !== scene) {
                     target = target.parent;
                 }
 
                 if (target && target.userData.title) {
                     hoveredObj = target;
-                    if (!isTouchDevice()) $crosshair.addClass('hover');
+                    if (!isMobileMode) $crosshair.addClass('hover');
                 } else {
                     hoveredObj = null;
-                    if (!isTouchDevice()) $crosshair.removeClass('hover');
+                    if (!isMobileMode) $crosshair.removeClass('hover');
                 }
             } else {
                 hoveredObj = null;
-                if (!isTouchDevice()) $crosshair.removeClass('hover');
+                if (!isMobileMode) $crosshair.removeClass('hover');
             }
             renderer.render(scene, camera);
         }
@@ -654,6 +678,7 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    // ... createRoom, addArtworkPlane, addSpotlight, createLabelMesh (変更なし) ...
     function createRoom(
         scene,
         width,
@@ -672,7 +697,6 @@ jQuery(document).ready(function ($) {
         const styles = { gallery: { wallColor: 0xffffff, bgColor: 0xaaaaaa } };
         const s = styles.gallery;
         scene.background = new THREE.Color(s.bgColor);
-
         let wallMaterial;
         if (wallUrl) {
             const loader = new THREE.TextureLoader(manager);
@@ -687,7 +711,6 @@ jQuery(document).ready(function ($) {
         }
         const roomGeo = new THREE.BoxGeometry(width, height, depth);
         scene.add(new THREE.Mesh(roomGeo, wallMaterial));
-
         const floorGeo = new THREE.PlaneGeometry(width, depth);
         if (useReflection && typeof THREE.Reflector !== 'undefined') {
             const reflector = new THREE.Reflector(floorGeo, { clipBias: 0.003, textureWidth: 512, textureHeight: 512, color: 0x666666 });
@@ -735,7 +758,6 @@ jQuery(document).ready(function ($) {
             floorMesh.position.y = -height / 2 + 0.01;
             scene.add(floorMesh);
         }
-
         let ceilingMaterial;
         if (ceilingUrl) {
             const loader = new THREE.TextureLoader(manager);
@@ -753,7 +775,6 @@ jQuery(document).ready(function ($) {
         ceilingMesh.rotation.x = Math.PI / 2;
         ceilingMesh.position.y = height / 2 - 0.01;
         scene.add(ceilingMesh);
-
         if (Array.isArray(pillarsData)) {
             let pillarMat;
             if (pillarUrl) {
@@ -777,7 +798,6 @@ jQuery(document).ready(function ($) {
             });
         }
     }
-
     function addArtworkPlane(scene, art, roomW, roomH, roomD, artLights, initialBrightness, interactableObjects, manager, labelFontSize, showLabels) {
         let x = art.x;
         let y = art.y;
@@ -796,11 +816,9 @@ jQuery(document).ready(function ($) {
                     break;
             }
         }
-
         const isPillar = wall.includes('_');
         let direction = wall;
         if (isPillar) direction = wall.split('_')[1];
-
         let rotY = 0;
         if (isPillar) {
             switch (direction) {
@@ -833,11 +851,7 @@ jQuery(document).ready(function ($) {
                     break;
             }
         }
-
-        if (art.rotationY !== undefined) {
-            rotY = parseFloat(art.rotationY);
-        }
-
+        if (art.rotationY !== undefined) rotY = parseFloat(art.rotationY);
         if (art.glb) {
             const loader = new THREE.GLTFLoader(manager);
             loader.load(art.glb, (gltf) => {
@@ -845,28 +859,20 @@ jQuery(document).ready(function ($) {
                 const box = new THREE.Box3().setFromObject(rawModel);
                 const center = box.getCenter(new THREE.Vector3());
                 const size = box.getSize(new THREE.Vector3());
-
                 rawModel.position.set(-center.x, -box.min.y, -center.z);
-
                 const wrapper = new THREE.Group();
                 wrapper.add(rawModel);
-
                 const maxDim = Math.max(size.x, size.y, size.z);
                 const targetSize = 1.5;
                 const baseScale = targetSize / maxDim;
-
-                if (art.scale && typeof art.scale === 'object' && art.scale.x) {
+                if (art.scale && typeof art.scale === 'object' && art.scale.x)
                     wrapper.scale.set(art.scale.x, art.scale.y, art.scale.z || art.scale.x);
-                } else {
-                    wrapper.scale.set(baseScale, baseScale, baseScale);
-                }
-
+                else wrapper.scale.set(baseScale, baseScale, baseScale);
                 wrapper.position.set(x, y, z);
                 wrapper.rotation.set(0, rotY, 0);
-
                 wrapper.userData = { title: art.title, desc: art.desc, link: art.link };
                 scene.add(wrapper);
-                interactableObjects.push(wrapper); // インタラクト対象に追加
+                interactableObjects.push(wrapper);
             });
         } else if (art.image) {
             const loader = new THREE.TextureLoader(manager);
@@ -876,24 +882,20 @@ jQuery(document).ready(function ($) {
                 const aspect = img && img.width && img.height ? img.width / img.height : 1.5;
                 const baseHeight = 1.0;
                 const baseWidth = baseHeight * aspect;
-
                 const group = new THREE.Group();
                 group.position.set(x, y, z);
                 group.rotation.y = rotY;
-
                 const geo = new THREE.PlaneGeometry(baseWidth, baseHeight);
                 const mat = new THREE.MeshStandardMaterial({ map: texture });
                 const mesh = new THREE.Mesh(geo, mat);
                 mesh.position.z = 0.025;
                 group.add(mesh);
-
-                const frameType = art.frame || 'white'; // Default White
+                const frameType = art.frame || 'white';
                 if (frameType !== 'none') {
                     let frameThick = 0.05;
                     let frameDepth = 0.06;
                     let frameColor = 0x5c3a21;
                     let frameRough = 0.8;
-
                     if (frameType === 'black') {
                         frameColor = 0x111111;
                         frameRough = 0.5;
@@ -901,78 +903,55 @@ jQuery(document).ready(function ($) {
                     if (frameType === 'white') {
                         frameColor = 0xeeeeee;
                         frameRough = 0.5;
-                        // ★白フレーム設定（厚みアップ）
                         frameThick = 0.06;
                         frameDepth = 0.15;
                     }
-
                     const frameMat = new THREE.MeshStandardMaterial({ color: frameColor, roughness: frameRough });
-
                     const topGeo = new THREE.BoxGeometry(baseWidth + frameThick * 2, frameThick, frameDepth);
                     const topMesh = new THREE.Mesh(topGeo, frameMat);
                     topMesh.position.y = baseHeight / 2 + frameThick / 2;
                     group.add(topMesh);
-
                     const botMesh = topMesh.clone();
                     botMesh.position.y = -(baseHeight / 2) - frameThick / 2;
                     group.add(botMesh);
-
                     const sideGeo = new THREE.BoxGeometry(frameThick, baseHeight, frameDepth);
                     const leftMesh = new THREE.Mesh(sideGeo, frameMat);
                     leftMesh.position.x = -(baseWidth / 2) - frameThick / 2;
                     group.add(leftMesh);
-
                     const rightMesh = leftMesh.clone();
                     rightMesh.position.x = baseWidth / 2 + frameThick / 2;
                     group.add(rightMesh);
                 }
-
                 if (art.title && showLabels) {
-                    // 作品の幅に合わせてラベルを作成
                     var labelData = createLabelMesh(art.title, baseWidth * 0.5, labelFontSize);
-
                     if (labelData) {
                         var labelMesh = labelData.mesh;
-
-                        // 配置位置の計算
-                        // 作品の中心(Y=0)から、作品の高さ半分 + 隙間 + ラベル高さ半分 下げる
-                        var gap = 0.05; // 隙間 5cm
-
-                        // フレームがある場合、フレームの厚みを考慮してラベル位置を調整
+                        var gap = 0.05;
                         var frameThick = frameType !== 'none' ? (frameType === 'white' ? 0.06 : 0.05) : 0;
                         var yOffset = frameThick;
-
                         var yPos = -(baseHeight / 2) - yOffset - gap - labelData.height / 2;
-
                         labelMesh.position.y = yPos;
-                        // フレームより少し手前に出さないと埋もれる可能性があるため調整
                         labelMesh.position.z = 0.04;
-
                         group.add(labelMesh);
                     }
                 }
-
                 if (art.scale && typeof art.scale === 'object') {
                     const s = art.scale.x ?? 1;
                     group.scale.set(s, s, s);
                 }
-
                 group.userData = { title: art.title, desc: art.desc, link: art.link, image: art.image };
-
                 scene.add(group);
-                interactableObjects.push(group); // インタラクト対象に追加
+                interactableObjects.push(group);
                 addSpotlight(scene, group, direction, isPillar, artLights, initialBrightness);
             });
         }
     }
-
     function addSpotlight(scene, targetMesh, direction, isPillar, artLights, initialBrightness) {
         const box = new THREE.Box3().setFromObject(targetMesh);
         const size = new THREE.Vector3();
         box.getSize(size);
         const artWidth = size.x;
         const artHeight = size.y;
-
         const diagonal = Math.sqrt(artWidth * artWidth + artHeight * artHeight);
         const angle = Math.PI / 6;
         const penumbra = 0.4;
@@ -985,11 +964,9 @@ jQuery(document).ready(function ($) {
         const spotLight = new THREE.SpotLight(color, intensity, finalDist * 3, angle, penumbra, decay);
         spotLight.userData.baseIntensity = intensity;
         spotLight.intensity = intensity * (initialBrightness !== undefined ? initialBrightness : 1.0);
-
         const offset = finalDist * 0.7;
         const heightOffset = finalDist * 0.7;
         const pos = targetMesh.position.clone();
-
         if (isPillar) {
             switch (direction) {
                 case 'north':
@@ -1028,21 +1005,11 @@ jQuery(document).ready(function ($) {
         scene.add(spotLight.target);
         if (artLights) artLights.push(spotLight);
     }
-
-    /**
-     * タイトルラベルのMeshを作成する関数（再修正版）
-     * @param {string} title - タイトル文字
-     * @param {number} width - プレート幅
-     * @param {number} fontSizePercent - フォントサイズ係数 (10-80程度)
-     */
     function createLabelMesh(title, width, fontSizePercent) {
         if (!title) return null;
-
         var plateW = width;
         var plateH = 0.15;
         var plateD = 0.02;
-
-        // Canvasサイズ計算
         var canvasW = 512;
         var canvasH = Math.round(canvasW * (plateH / plateW));
         if (canvasH < 64) {
@@ -1050,41 +1017,28 @@ jQuery(document).ready(function ($) {
             canvasW = Math.round(canvasW * scale);
             canvasH = 64;
         }
-
         var canvas = document.createElement('canvas');
         canvas.width = canvasW;
         canvas.height = canvasH;
         var ctx = canvas.getContext('2d');
-
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvasW, canvasH);
-
-        // ★修正点1: 引数の fontSizePercent を使ってサイズを決定 (デフォルト30)
         var percent = fontSizePercent || 30;
         var fontSize = Math.floor(canvasH * (percent / 100));
         if (fontSize < 10) fontSize = 10;
-
-        // ★修正点2: 太さを 'bold' から 'normal' (または '500') に変更
         ctx.font = 'normal ' + fontSize + 'px sans-serif';
-
         ctx.fillStyle = '#000000';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-
         ctx.fillText(title, canvasW / 2, canvasH / 2);
-
         var texture = new THREE.CanvasTexture(canvas);
         texture.encoding = THREE.sRGBEncoding;
         texture.minFilter = THREE.LinearFilter;
-
         var matWhite = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
         var matText = new THREE.MeshStandardMaterial({ map: texture, color: 0xffffff, roughness: 0.5 });
-
         var materials = [matWhite, matWhite, matWhite, matWhite, matText, matWhite];
-
         var geo = new THREE.BoxGeometry(plateW, plateH, plateD);
         var mesh = new THREE.Mesh(geo, materials);
-
         return { mesh: mesh, height: plateH };
     }
 });

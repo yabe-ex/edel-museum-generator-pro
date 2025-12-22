@@ -10,6 +10,8 @@ class EdelMuseumGeneratorAdminPro {
         add_action('wp_ajax_edel_museum_pro_save_layout', array($this, 'ajax_save_layout'));
         add_action('wp_ajax_edel_museum_pro_clear_layout', array($this, 'ajax_clear_layout'));
 
+        add_action('wp_ajax_edel_museum_pro_get_default', array($this, 'ajax_get_default_layout'));
+
         add_filter('upload_mimes', array($this, 'allow_glb_uploads'));
         add_filter('wp_check_filetype_and_ext', array($this, 'fix_glb_mime_type_check'), 10, 4);
 
@@ -1152,5 +1154,21 @@ class EdelMuseumGeneratorAdminPro {
 
         delete_post_meta($post_id, '_edel_museum_layout');
         wp_send_json_success(array('message' => __('Reset to default layout.', 'edel-museum-generator')));
+    }
+
+    public function ajax_get_default_layout() {
+        if (!current_user_can('edit_posts')) wp_send_json_error(array('message' => __('Permission denied', 'edel-museum-generator')));
+        check_ajax_referer(EDEL_MUSEUM_GENERATOR_PRO_SLUG, '_nonce');
+
+        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        if (!$post_id) wp_send_json_error(array('message' => __('Missing data', 'edel-museum-generator')));
+
+        // 現在のメタボックス設定を取得
+        $meta = get_post_meta($post_id, '_edel_exhibition_data', true) ?: array();
+
+        // デフォルトのレイアウトを計算
+        $layout = $this->generate_layout_data($post_id, $meta);
+
+        wp_send_json_success($layout);
     }
 }

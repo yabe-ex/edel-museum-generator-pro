@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Edel Museum Generator\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-12 14:36+0000\n"
-"PO-Revision-Date: 2025-12-15 02:27+0000\n"
+"PO-Revision-Date: 2025-12-22 09:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: 日本語\n"
 "Language: ja\n"
@@ -15,140 +15,140 @@ msgstr ""
 "X-Loco-Version: 2.8.0; wp-6.9; php-8.1.23\n"
 "X-Domain: edel-museum-generator"
 
-#: inc/class-admin.php:71
+#: inc/class-admin.php:73
 msgid ""
 "*Note: If a GLB file is set, it will be used instead of the Featured Image."
 msgstr "※注意: GLBファイルが設定されている場合、アイキャッチ画像の代わりに使用されます。"
 
-#: inc/class-admin.php:654
+#: inc/class-admin.php:656
 msgid ""
 "1 Pillar: Offset from center (Default: 0). <br>2 Pillars: Distance from "
 "center (Default: 25). <br>Range: -45 to 45."
 msgstr "1本: 中心からのオフセット (初期値: 0)。<br>2本: 中心からの距離 (初期値: 25)。<br>範囲: -45 〜 45。"
 
-#: inc/class-admin.php:319
+#: inc/class-admin.php:321
 msgid "3D Model URL (.glb):"
 msgstr "3Dモデル URL (.glb):"
 
-#: inc/class-admin.php:254 inc/class-admin.php:255
+#: inc/class-admin.php:256 inc/class-admin.php:257
 msgid "Add New Artwork"
 msgstr "新規作品を追加"
 
-#: inc/class-admin.php:268 inc/class-admin.php:269
+#: inc/class-admin.php:270 inc/class-admin.php:271
 msgid "Add New Exhibition"
 msgstr "新規展示室を作成"
 
-#: inc/class-admin.php:97
+#: inc/class-admin.php:99
 msgid "Adjust Brightness and <strong>Movement Speed</strong>."
 msgstr "明るさと<strong>移動速度</strong>を調整します。"
 
-#: inc/class-front.php:27
+#: inc/class-front.php:28
 msgid "Are you sure you want to reset layout?"
 msgstr "本当に配置をリセットしますか？"
 
-#: inc/class-admin.php:253
+#: inc/class-admin.php:255
 msgid "Artwork"
 msgstr "作品"
 
-#: inc/class-admin.php:280
+#: inc/class-admin.php:282
 msgid "Artwork Options"
 msgstr "作品オプション"
 
-#: inc/class-front.php:314
+#: inc/class-front.php:319
 msgid "Back to Viewer"
 msgstr "閲覧モードに戻る"
 
-#: inc/class-admin.php:309
+#: inc/class-admin.php:311
 msgid "Black (Modern)"
 msgstr "黒 (モダン)"
 
-#: inc/class-admin.php:609
+#: inc/class-admin.php:611
 msgid "Ceiling"
 msgstr "天井"
 
-#: inc/class-admin.php:84
+#: inc/class-admin.php:86
 msgid "Choose the number of pillars (0, 1, or 2)."
 msgstr "柱の数を選択します（0, 1, 2本）。"
 
-#: inc/class-admin.php:575
+#: inc/class-admin.php:577
 msgid "Choose the starting point and orientation."
 msgstr "スタート地点と向きを選択してください。"
 
-#: inc/class-admin.php:133
+#: inc/class-admin.php:135
 msgid "Click <strong>\"Save Layout\"</strong> to apply changes."
 msgstr "<strong>「レイアウトを保存」</strong>をクリックして変更を適用します。"
 
-#: inc/class-admin.php:91
+#: inc/class-admin.php:93
 msgid "Click <strong>\"Select\"</strong> to choose 2D artworks."
 msgstr "<strong>「選択」</strong>をクリックして2D作品を選びます。"
 
-#: inc/class-admin.php:92
+#: inc/class-admin.php:94
 msgid "Click <strong>\"Select\"</strong> to choose 3D artworks (.glb)."
 msgstr "<strong>「選択」</strong>をクリックして3D作品(.glb)を選びます。"
 
-#: inc/class-admin.php:125
+#: inc/class-admin.php:127
 msgid "Click on any artwork in the room."
 msgstr "部屋の中にある作品をクリックします。"
 
-#: inc/class-admin.php:124
+#: inc/class-admin.php:126
 msgid ""
 "Click the <strong>\"Switch to Editor\"</strong> button at the top right."
 msgstr "右上の<strong>「Editorに切り替え」</strong>ボタンをクリックします。"
 
-#: inc/class-admin.php:726
+#: inc/class-admin.php:728
 msgid "Close"
 msgstr "閉じる"
 
-#: inc/class-admin.php:95
+#: inc/class-admin.php:97
 msgid "Configure the viewing experience:"
 msgstr "鑑賞体験の設定:"
 
-#: inc/class-front.php:33
+#: inc/class-front.php:35
 msgid "Controls"
 msgstr "操作"
 
-#: inc/class-admin.php:126
+#: inc/class-admin.php:128
 msgid "Controls:"
 msgstr "操作:"
 
-#: inc/class-admin.php:182 inc/class-admin.php:218
+#: inc/class-admin.php:184 inc/class-admin.php:220
 msgid "Copied!"
 msgstr "コピーしました。"
 
-#: inc/class-admin.php:180
+#: inc/class-admin.php:182
 msgid "Copy to Clipboard"
 msgstr "クリップボードにコピー"
 
-#: inc/class-admin.php:80
+#: inc/class-admin.php:82
 msgid "Create a room and decide which artworks to place on which walls."
 msgstr "部屋を作成し、どの壁にどの作品を配置するかを決定します。"
 
-#: inc/class-front.php:37
+#: inc/class-front.php:39
 msgid "Cursor:"
 msgstr "カーソル:"
 
-#: inc/class-admin.php:586
+#: inc/class-admin.php:588
 msgid ""
 "Default: 30 (Range: 10 - 80). Adjust the size of the artwork title text."
 msgstr "初期値: 30 (範囲: 10 - 80)。作品タイトルテキストのサイズを調整します。"
 
-#: inc/class-admin.php:595
+#: inc/class-admin.php:597
 msgid "Display title labels below artworks."
 msgstr "作品の下にタイトルラベルを表示します。"
 
-#: inc/class-admin.php:128
+#: inc/class-admin.php:130
 msgid "Drag arrows to move the object."
 msgstr "矢印をドラッグしてオブジェクトを移動します。"
 
-#: inc/class-admin.php:129
+#: inc/class-admin.php:131
 msgid "Drag the circle or use the slider to rotate."
 msgstr "円をドラッグするかスライダーを使って回転させます。"
 
-#: inc/class-admin.php:571
+#: inc/class-admin.php:573
 msgid "East"
 msgstr "東"
 
-#: inc/class-admin.php:677
+#: inc/class-admin.php:679
 msgid "East Wall"
 msgstr "東側の壁"
 
@@ -161,114 +161,114 @@ msgstr "Edel Hearts"
 msgid "Edel Museum Generator Pro"
 msgstr "Edel Museum Generator Pro"
 
-#: inc/class-admin.php:42
+#: inc/class-admin.php:44
 msgid "Edel Museum Generator Pro - Usage Guide"
 msgstr "Edel Museum Generator Pro - ユーザーガイド"
 
-#: inc/class-admin.php:256
+#: inc/class-admin.php:258
 msgid "Edit Artwork"
 msgstr "作品を編集"
 
-#: inc/class-admin.php:270
+#: inc/class-admin.php:272
 msgid "Edit Exhibition"
 msgstr "展示室を編集"
 
-#: inc/class-admin.php:108
+#: inc/class-admin.php:110
 msgid "Embed the museum on any page using a shortcode."
 msgstr "ショートコードを使って、任意のページに美術館を埋め込みます。"
 
-#: inc/class-admin.php:73
+#: inc/class-admin.php:75
 msgid "Enter a URL if you want to link to an external page."
 msgstr "外部ページにリンクしたい場合はURLを入力してください。"
 
-#: inc/class-admin.php:669
+#: inc/class-admin.php:671
 msgid ""
 "Enter IDs separated by commas. (Only artworks with .glb models can be "
 "selected)"
 msgstr "IDをカンマ区切りで入力してください。(GLBモデルを持つ作品のみ選択可能です)"
 
-#: inc/class-admin.php:60
+#: inc/class-admin.php:62
 msgid ""
 "Enter the <strong>Title</strong> and <strong>Description</strong> (displayed "
 "in the popup)."
 msgstr "<strong>タイトル</strong>と<strong>説明</strong>を入力します（ポップアップに表示されます）。"
 
-#: inc/class-front.php:25
+#: inc/class-front.php:26
 msgid "Error"
 msgstr "エラー"
 
-#: inc/class-front.php:307
+#: inc/class-front.php:312
 msgid "Error: Data not found."
 msgstr "エラー: データが見つかりません。"
 
-#: inc/class-front.php:254
+#: inc/class-front.php:259
 msgid "Error: Please specify Exhibition ID."
 msgstr "エラー: 展示室IDを指定してください。"
 
-#: inc/class-front.php:38
+#: inc/class-front.php:40
 msgid "ESC (Back / Unlock)"
 msgstr "ESC (戻る・解除)"
 
-#: inc/class-admin.php:267
+#: inc/class-admin.php:269
 msgid "Exhibition"
 msgstr "展示室"
 
-#: inc/class-admin.php:266
+#: inc/class-admin.php:268
 msgid "Exhibition Settings"
 msgstr "展示室設定"
 
-#: inc/class-admin.php:118
+#: inc/class-admin.php:120
 msgid ""
 "Fine-tune the position, size, and angle of your artworks in real-time 3D."
 msgstr "リアルタイム3Dで作品の位置、サイズ、角度を微調整します。"
 
-#: inc/class-admin.php:57
+#: inc/class-admin.php:59
 msgid ""
 "First, register the artworks (images or 3D models) you want to display in "
 "the museum."
 msgstr "まず、美術館に展示したい作品（画像または3Dモデル）を登録します。"
 
-#: inc/class-admin.php:606
+#: inc/class-admin.php:608
 msgid "Floor"
 msgstr "床"
 
-#: inc/class-admin.php:62
+#: inc/class-admin.php:64
 msgid "For 2D Images (Paintings):"
 msgstr "2D画像（絵画）の場合:"
 
-#: inc/class-admin.php:69
+#: inc/class-admin.php:71
 msgid "For 3D Models (Sculptures/Objects):"
 msgstr "3Dモデル（彫刻/オブジェクト）の場合:"
 
-#: inc/class-admin.php:47
+#: inc/class-admin.php:49
 msgid "For more detailed instructions and tutorials, please visit:"
 msgstr "より詳細な手順やチュートリアルについては、以下をご覧ください:"
 
-#: inc/class-admin.php:65 inc/class-admin.php:306
+#: inc/class-admin.php:67 inc/class-admin.php:308
 msgid "Frame Style:"
 msgstr "Frame Style:"
 
-#: inc/class-admin.php:660
+#: inc/class-admin.php:662
 msgid "Free Placement (3D Models / Objects)"
 msgstr "自由配置 (3Dモデル / オブジェクト)"
 
-#: inc/class-admin.php:663
+#: inc/class-admin.php:665
 msgid "Free Space"
 msgstr "フリースペース"
 
-#: inc/class-admin.php:92
+#: inc/class-admin.php:94
 msgid "Free Space:"
 msgstr "フリースペース:"
 
-#: inc/class-admin.php:82
+#: inc/class-admin.php:84
 msgid "Go to <strong>Exhibition Settings > Add New Exhibition</strong>."
 msgstr "<strong>Exhibition Settings > Add New Exhibition</strong> に移動します。"
 
-#: inc/class-admin.php:59
+#: inc/class-admin.php:61
 msgid "Go to <strong>Museum Artworks > Add New Artwork</strong>."
 msgstr "<strong>Museum Artworks > Add New Artwork</strong> に移動します。"
 
-#: inc/class-front.php:35
+#: inc/class-front.php:37
 msgid "Height:"
 msgstr "高さ:"
 
@@ -276,151 +276,155 @@ msgstr "高さ:"
 msgid "https://edel-hearts.com"
 msgstr "https://edel-hearts.com"
 
-#: inc/class-admin.php:582
+#: inc/class-admin.php:584
 msgid "Label Font Size (%)"
 msgstr "ラベルのフォントサイズ (%)"
 
-#: inc/class-admin.php:99
+#: inc/class-admin.php:101
 msgid "Labels:"
 msgstr "ラベル:"
 
-#: inc/class-admin.php:548 inc/class-admin.php:579
+#: inc/class-front.php:29
+msgid "Layout reset to defaults. Please click \"Save Layout\" to apply."
+msgstr "初期配置に戻しました。「レイアウトを保存」を押して確定してください。"
+
+#: inc/class-admin.php:550 inc/class-admin.php:581
 msgid "Lighting & Movement"
 msgstr "照明と移動設定"
 
-#: inc/class-admin.php:73
+#: inc/class-admin.php:75
 msgid "Link URL (Optional):"
 msgstr "リンクURL (任意):"
 
-#: inc/class-admin.php:299
+#: inc/class-admin.php:301
 msgid "Link URL:"
 msgstr "リンクURL:"
 
-#: inc/class-front.php:31
+#: inc/class-front.php:33
 msgid "Loading Assets..."
 msgstr "アセットを読み込み中..."
 
-#: inc/class-front.php:43
+#: inc/class-front.php:45
 msgid "Loading..."
 msgstr "読み込み中..."
 
-#: inc/class-front.php:36
+#: inc/class-front.php:38
 msgid "Look:"
 msgstr "視点:"
 
-#: inc/class-admin.php:1140 inc/class-admin.php:1151
+#: inc/class-admin.php:1142 inc/class-admin.php:1153 inc/class-admin.php:1164
 msgid "Missing data"
 msgstr "データが不足しています"
 
-#: inc/class-front.php:29
+#: inc/class-front.php:31
 msgid "Move (T)"
 msgstr "移動 (T)"
 
-#: inc/class-admin.php:128
+#: inc/class-admin.php:130
 msgid "Move (T):"
 msgstr "移動 (T):"
 
-#: inc/class-front.php:34
+#: inc/class-front.php:36
 msgid "Move:"
 msgstr "移動:"
 
-#: inc/class-admin.php:559
+#: inc/class-admin.php:561
 msgid "Movement Speed"
 msgstr "移動速度"
 
-#: inc/class-admin.php:97
+#: inc/class-admin.php:99
 msgid "Movement:"
 msgstr "移動設定:"
 
-#: inc/class-admin.php:252
+#: inc/class-admin.php:254
 msgid "Museum Artworks"
 msgstr "ミュージアム作品"
 
-#: inc/class-admin.php:746
+#: inc/class-admin.php:748
 msgid "No artworks found."
 msgstr "作品が見つかりませんでした。"
 
-#: inc/class-admin.php:311
+#: inc/class-admin.php:313
 msgid "No Frame (Canvas)"
 msgstr "フレームなし (キャンバス)"
 
-#: inc/class-admin.php:570
+#: inc/class-admin.php:572
 msgid "North"
 msgstr "北"
 
-#: inc/class-admin.php:677
+#: inc/class-admin.php:679
 msgid "North Wall"
 msgstr "北側の壁"
 
-#: inc/class-admin.php:628
+#: inc/class-admin.php:630
 msgid "Number of Pillars (0-2)"
 msgstr "柱の本数 (0-2)"
 
-#: inc/class-admin.php:645
+#: inc/class-admin.php:647
 msgid "Percentage of room depth. (Max 50%)"
 msgstr "部屋の奥行きに対する割合。(最大 50%)"
 
-#: inc/class-admin.php:636
+#: inc/class-admin.php:638
 msgid "Percentage of room width. (1 Pillar: Max 100%, 2 Pillars: Max 50% each)"
 msgstr "部屋の幅に対する割合。(1本: 最大 100%, 2本: 各最大 50%)"
 
-#: inc/class-admin.php:1134 inc/class-admin.php:1147
+#: inc/class-admin.php:1136 inc/class-admin.php:1149 inc/class-admin.php:1160
 msgid "Permission denied"
 msgstr "権限がありません"
 
-#: inc/class-admin.php:608
+#: inc/class-admin.php:610
 msgid "Pillar"
 msgstr "柱"
 
-#: inc/class-admin.php:698
+#: inc/class-admin.php:700
 msgid "Pillar 1 East"
 msgstr "柱1 東面"
 
-#: inc/class-admin.php:696
+#: inc/class-admin.php:698
 msgid "Pillar 1 North"
 msgstr "柱1 北面"
 
-#: inc/class-admin.php:697
+#: inc/class-admin.php:699
 msgid "Pillar 1 South"
 msgstr "柱1 南面"
 
-#: inc/class-admin.php:699
+#: inc/class-admin.php:701
 msgid "Pillar 1 West"
 msgstr "柱1 西面"
 
-#: inc/class-admin.php:702
+#: inc/class-admin.php:704
 msgid "Pillar 2 East"
 msgstr "柱2 東面"
 
-#: inc/class-admin.php:700
+#: inc/class-admin.php:702
 msgid "Pillar 2 North"
 msgstr "柱2 北面"
 
-#: inc/class-admin.php:701
+#: inc/class-admin.php:703
 msgid "Pillar 2 South"
 msgstr "柱2 南面"
 
-#: inc/class-admin.php:703
+#: inc/class-admin.php:705
 msgid "Pillar 2 West"
 msgstr "柱2 西面"
 
-#: inc/class-admin.php:641
+#: inc/class-admin.php:643
 msgid "Pillar Depth (%)"
 msgstr "柱の奥行き (%)"
 
-#: inc/class-admin.php:692
+#: inc/class-admin.php:694
 msgid "Pillar Placement"
 msgstr "柱への配置"
 
-#: inc/class-admin.php:650
+#: inc/class-admin.php:652
 msgid "Pillar Placement X (%)"
 msgstr "柱の配置位置 X (%)"
 
-#: inc/class-admin.php:632
+#: inc/class-admin.php:634
 msgid "Pillar Width (%)"
 msgstr "柱の幅 (%)"
 
-#: inc/class-admin.php:89
+#: inc/class-admin.php:91
 msgid "Placement:"
 msgstr "配置:"
 
@@ -428,287 +432,287 @@ msgstr "配置:"
 msgid "Premium version. Unlock Link integration and 3D Model (GLB) support."
 msgstr "プレミアム版。リンク連携機能と3Dモデル（GLB）のサポートをアンロックします。"
 
-#: inc/class-admin.php:360
+#: inc/class-admin.php:362
 msgid "Pro Version Active"
 msgstr "Pro版が有効です"
 
-#: inc/class-admin.php:112
+#: inc/class-admin.php:114
 msgid ""
 "Replace <strong>123</strong> with your Exhibition ID (found in the URL when "
 "editing the exhibition)."
 msgstr "<strong>123</strong> を展示ID（展示の編集画面のURLに含まれています）に置き換えてください。"
 
-#: inc/class-front.php:26
+#: inc/class-front.php:27
 msgid "Reset"
 msgstr "リセット"
 
-#: inc/class-front.php:360
+#: inc/class-front.php:365
 msgid "Reset Layout"
 msgstr "配置リセット"
 
-#: inc/class-admin.php:1154
+#: inc/class-admin.php:1156
 msgid "Reset to default layout."
 msgstr "初期配置に戻しました。"
 
-#: inc/class-front.php:40
+#: inc/class-front.php:42
 msgid "Room"
 msgstr "Room"
 
-#: inc/class-admin.php:551
+#: inc/class-admin.php:553
 msgid "Room Brightness"
 msgstr "部屋の明るさ"
 
-#: inc/class-admin.php:281
+#: inc/class-admin.php:283
 msgid "Room Settings & Artwork Placement"
 msgstr "ルーム設定 & 作品配置"
 
-#: inc/class-front.php:30
+#: inc/class-front.php:32
 msgid "Rotate (R)"
 msgstr "回転 (R)"
 
-#: inc/class-admin.php:129
+#: inc/class-admin.php:131
 msgid "Rotate (R):"
 msgstr "回転 (R):"
 
-#: inc/class-admin.php:171
+#: inc/class-admin.php:173
 msgid "Save draft to generate shortcode."
 msgstr "下書きを保存するとショートコードが生成されます。"
 
-#: inc/class-front.php:361
+#: inc/class-front.php:366
 msgid "Save Layout"
 msgstr "レイアウトを保存"
 
-#: inc/class-admin.php:1143
+#: inc/class-admin.php:1145
 msgid "Saved successfully!"
 msgstr "保存しました！"
 
-#: inc/class-front.php:24
+#: inc/class-front.php:25
 msgid "Saved!"
 msgstr "保存しました！"
 
-#: inc/class-front.php:354 inc/class-admin.php:130
+#: inc/class-front.php:359 inc/class-admin.php:132
 msgid "Scale:"
 msgstr "サイズ:"
 
-#: inc/class-admin.php:70
+#: inc/class-admin.php:72
 msgid ""
 "Scroll down to \"Artwork Options\" and upload a <strong>.glb</strong> file."
 msgstr "「Artwork Options」までスクロールし、<strong>.glb</strong> ファイルをアップロードします。"
 
-#: inc/class-admin.php:667 inc/class-admin.php:685 inc/class-admin.php:714
+#: inc/class-admin.php:669 inc/class-admin.php:687 inc/class-admin.php:716
 msgid "Select"
 msgstr "選択"
 
-#: inc/class-admin.php:818
+#: inc/class-admin.php:820
 msgid "Select 2D Artworks (Wall)"
 msgstr "2D作品を選択 (壁)"
 
-#: inc/class-admin.php:336
+#: inc/class-admin.php:338
 msgid "Select 3D Model (.glb)"
 msgstr "3Dモデルを選択 (.glb)"
 
-#: inc/class-admin.php:816
+#: inc/class-admin.php:818
 msgid "Select 3D Objects (Free Space)"
 msgstr "3Dオブジェクトを選択 (フリースペース)"
 
-#: inc/class-admin.php:65
+#: inc/class-admin.php:67
 msgid ""
 "Select a frame style (Wood, Black, White, or No Frame) in the \"Artwork "
 "Options\" metabox."
 msgstr "「作品オプション」メタボックスでフレームスタイル（木目、黒、白、フレームなし）を選択します。"
 
-#: inc/class-admin.php:125
+#: inc/class-admin.php:127
 msgid "Select an Object:"
 msgstr "オブジェクトの選択:"
 
-#: inc/class-admin.php:725
+#: inc/class-admin.php:727
 msgid "Select Artworks"
 msgstr "作品を選択"
 
-#: inc/class-admin.php:321
+#: inc/class-admin.php:323
 msgid "Select from Media Library"
 msgstr "メディアライブラリから選択"
 
-#: inc/class-admin.php:618
+#: inc/class-admin.php:620
 msgid "Select Image"
 msgstr "画像を選択"
 
-#: inc/class-admin.php:83
+#: inc/class-admin.php:85
 msgid "Select images for Floor, Wall, Pillar, and Ceiling."
 msgstr "床、壁、柱、天井の画像を選択します。"
 
-#: inc/class-admin.php:767
+#: inc/class-admin.php:769
 msgid "Select Texture Image"
 msgstr "テクスチャ画像を選択"
 
-#: inc/class-admin.php:314
+#: inc/class-admin.php:316
 msgid "Select the frame style for 2D images. (Ignored for 3D models)"
 msgstr "2D画像のフレームスタイルを選択してください。(3Dモデルでは無視されます)"
 
-#: inc/class-admin.php:98
+#: inc/class-admin.php:100
 msgid "Select the starting point (South, North, East, West)."
 msgstr "スタート地点（南、北、東、西）を選択します。"
 
-#: inc/class-admin.php:63
+#: inc/class-admin.php:65
 msgid ""
 "Set the <strong>Featured Image</strong> (right sidebar). This will be framed "
 "on the wall."
 msgstr "右サイドバーの<strong>アイキャッチ画像</strong>を設定します。これが壁に飾られます。"
 
-#: inc/class-admin.php:95
+#: inc/class-admin.php:97
 msgid "Settings:"
 msgstr "設定:"
 
-#: inc/class-admin.php:152
+#: inc/class-admin.php:154
 msgid "Shortcode"
 msgstr "ショートコード"
 
-#: inc/class-admin.php:177
+#: inc/class-admin.php:179
 msgid "Shortcode:"
 msgstr "ショートコード:"
 
-#: inc/class-admin.php:591
+#: inc/class-admin.php:593
 msgid "Show Title Labels"
 msgstr "タイトルラベルを表示"
 
-#: inc/class-admin.php:569
+#: inc/class-admin.php:571
 msgid "South (Default)"
 msgstr "南 (デフォルト)"
 
-#: inc/class-admin.php:677
+#: inc/class-admin.php:679
 msgid "South Wall"
 msgstr "南側の壁"
 
-#: inc/class-front.php:41
+#: inc/class-front.php:43
 msgid "Spotlight"
 msgstr "Spotlight"
 
-#: inc/class-admin.php:555
+#: inc/class-admin.php:557
 msgid "Spotlight Brightness"
 msgstr "照明の明るさ"
 
-#: inc/class-admin.php:566
+#: inc/class-admin.php:568
 msgid "Start Position"
 msgstr "スタート位置"
 
-#: inc/class-admin.php:98
+#: inc/class-admin.php:100
 msgid "Start Position:"
 msgstr "スタート位置:"
 
-#: inc/class-admin.php:55
+#: inc/class-admin.php:57
 msgid "Step 1: Add Artworks"
 msgstr "ステップ 1: 作品の追加"
 
-#: inc/class-admin.php:78
+#: inc/class-admin.php:80
 msgid "Step 2: Create Exhibition Room"
 msgstr "ステップ 2: 展示室の作成"
 
-#: inc/class-admin.php:106
+#: inc/class-admin.php:108
 #| msgid "Step 4: Display on Site"
 msgid "Step 3: Display on Site"
 msgstr "ステップ 4: サイトへの表示"
 
-#: inc/class-admin.php:116
+#: inc/class-admin.php:118
 #| msgid "Step 3: 3D Layout Editor"
 msgid "Step 4: 3D Layout Editor"
 msgstr "ステップ 3: 3Dレイアウトエディタ"
 
-#: inc/class-admin.php:625
+#: inc/class-admin.php:627
 msgid "Structure"
 msgstr "構造"
 
-#: inc/class-admin.php:84
+#: inc/class-admin.php:86
 msgid "Structure:"
 msgstr "構造:"
 
-#: inc/class-front.php:314
+#: inc/class-front.php:319
 msgid "Switch to Editor"
 msgstr "編集モードに切り替え"
 
-#: inc/class-admin.php:602
+#: inc/class-admin.php:604
 msgid "Textures (Image URL)"
 msgstr "テクスチャ (画像URL)"
 
-#: inc/class-admin.php:83
+#: inc/class-admin.php:85
 msgid "Textures:"
 msgstr "テクスチャ:"
 
-#: inc/class-admin.php:363
+#: inc/class-admin.php:365
 msgid "Thank you for your support!"
 msgstr "ご支援ありがとうございます！"
 
-#: inc/class-admin.php:120
+#: inc/class-admin.php:122
 msgid "Tip:"
 msgstr "ヒント:"
 
-#: inc/class-admin.php:99
+#: inc/class-admin.php:101
 msgid ""
 "Toggle <strong>Show Title Labels</strong> and adjust <strong>Label Font "
 "Size</strong>."
 msgstr "<strong>タイトルラベルを表示</strong>の切り替えや、<strong>ラベルのフォントサイズ</strong>を調整します。"
 
-#: inc/class-admin.php:323
+#: inc/class-admin.php:325
 msgid "Upload a .glb file to Media Library."
 msgstr ".glbファイルをメディアライブラリにアップロードしてください。"
 
-#: inc/class-admin.php:301
+#: inc/class-admin.php:303
 msgid "URL to navigate when artwork is clicked."
 msgstr "作品クリック時の遷移先URL。"
 
-#: edel-museum-generator-pro.php:62 inc/class-admin.php:31
-#: inc/class-admin.php:32
+#: edel-museum-generator-pro.php:62 inc/class-admin.php:33
+#: inc/class-admin.php:34
 msgid "Usage Guide"
 msgstr "使い方ガイド"
 
-#: inc/class-admin.php:130
+#: inc/class-admin.php:132
 msgid "Use the slider to resize (0.1x to 3.0x)."
 msgstr "スライダーを使ってサイズを変更します（0.1倍〜3.0倍）。"
 
-#: inc/class-admin.php:769
+#: inc/class-admin.php:771
 msgid "Use this image"
 msgstr "この画像を利用"
 
-#: inc/class-admin.php:338
+#: inc/class-admin.php:340
 msgid "Use this model"
 msgstr "このモデルを使用"
 
-#: inc/class-front.php:42 inc/class-front.php:342
+#: inc/class-front.php:44 inc/class-front.php:347
 msgid "View Details"
 msgstr "詳細を見る"
 
-#: inc/class-admin.php:123
+#: inc/class-admin.php:125
 msgid "View the Exhibition post on the front-end (click \"View Exhibition\")."
 msgstr "フロントエンドで展示投稿を表示します（「展示を表示」をクリック）。"
 
-#: inc/class-admin.php:607
+#: inc/class-admin.php:609
 msgid "Wall"
 msgstr "壁"
 
-#: inc/class-admin.php:674
+#: inc/class-admin.php:676
 msgid "Wall Placement (Images)"
 msgstr "壁への配置 (画像)"
 
-#: inc/class-admin.php:91
+#: inc/class-admin.php:93
 msgid "Walls/Pillars:"
 msgstr "壁/柱:"
 
-#: inc/class-admin.php:572
+#: inc/class-admin.php:574
 msgid "West"
 msgstr "西"
 
-#: inc/class-admin.php:677
+#: inc/class-admin.php:679
 msgid "West Wall"
 msgstr "西側の壁"
 
-#: inc/class-admin.php:310
+#: inc/class-admin.php:312
 msgid "White (Minimal)"
 msgstr "白 (ミニマル)"
 
-#: inc/class-admin.php:308
+#: inc/class-admin.php:310
 msgid "Wood (Standard)"
 msgstr "木目 (標準)"
 
-#: inc/class-admin.php:86
+#: inc/class-admin.php:88
 msgid ""
 "You can adjust the <strong>Width</strong>, <strong>Depth</strong>, and "
 "<strong>Placement X</strong> (offset/spacing) of the pillars."
@@ -716,7 +720,7 @@ msgstr ""
 "柱の<strong>幅</strong>、<strong>奥行き</strong>、<strong>配置位置 X</strong>"
 "（オフセット/間隔）を調整できます。"
 
-#: inc/class-admin.php:120
+#: inc/class-admin.php:122
 msgid ""
 "You must <strong>Publish/Update</strong> the Exhibition post first to "
 "generate the preview."

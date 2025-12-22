@@ -55,7 +55,7 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Close Button - 見やすく大きく */
+/* Close Button */
 #ai-modal-close {
     position: absolute;
     top: 10px;
@@ -106,12 +106,23 @@
     background: #005177;
 }
 
-/* レスポンシブ: スマホ表示 */
+/* Joystick Zone */
+.ai-joystick-zone {
+    /* デフォルトではJS制御で表示するので none にしておくが */
+    /* JSで display: block を強制適用するため、ここは none でOK */
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 120px;
+    height: 120px;
+    z-index: 900;
+    touch-action: none;
+}
+
+/* レスポンシブ: スマホ表示（念のため残す） */
 @media (max-width: 768px) {
     #ai-crosshair {
         display: none;
-    } /* スマホではクロスヘア不要 */
-    #ai-joystick-zone {
-        display: block !important;
-    } /* ジョイスティック表示 */
+    }
 }

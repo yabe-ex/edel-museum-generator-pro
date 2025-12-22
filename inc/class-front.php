@@ -12,19 +12,21 @@ class EdelMuseumGeneratorFrontPro {
         $is_edit_mode = isset($_GET['museum_edit']) && $_GET['museum_edit'] === '1';
         $version = (defined('EDEL_MUSEUM_GENERATOR_PRO_DEVELOP') && true === EDEL_MUSEUM_GENERATOR_PRO_DEVELOP) ? time() : EDEL_MUSEUM_GENERATOR_PRO_VERSION;
 
-        wp_enqueue_script('three', 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js', array(), '0.128.0', true);
-        wp_enqueue_script('three-gltf-loader', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js', array('three'), '0.128.0', true);
-        wp_enqueue_script('nipplejs', 'https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipple.min.js', array(), '0.10.1', true);
+        wp_enqueue_script('three', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/three.min.js', array(), '0.128.0', true);
+        wp_enqueue_script('three-gltf-loader', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/GLTFLoader.js', array('three'), '0.128.0', true);
+        wp_enqueue_script('nipplejs', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/nipplejs.min.js', array(), '0.10.1', true);
 
         $localize_data = array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce'   => wp_create_nonce(EDEL_MUSEUM_GENERATOR_PRO_SLUG),
             'action_save'  => 'edel_museum_pro_save_layout',
             'action_clear' => 'edel_museum_pro_clear_layout',
+            'action_get_default' => 'edel_museum_pro_get_default',
             'txt_saved' => __('Saved!', 'edel-museum-generator'),
             'txt_error' => __('Error', 'edel-museum-generator'),
             'txt_reset' => __('Reset', 'edel-museum-generator'),
             'txt_confirm_reset' => __('Are you sure you want to reset layout?', 'edel-museum-generator'),
+            'txt_reset_notification' => __('Layout reset to defaults. Please click "Save Layout" to apply.', 'edel-museum-generator'),
             // Editor Labels
             'txt_move_t'   => __('Move (T)', 'edel-museum-generator'),
             'txt_rotate_r' => __('Rotate (R)', 'edel-museum-generator'),
@@ -44,13 +46,17 @@ class EdelMuseumGeneratorFrontPro {
         );
 
         if ($is_edit_mode) {
-            wp_enqueue_script('three-orbitcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js', array('three'), '0.128.0', true);
-            wp_enqueue_script('three-transformcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js', array('three'), '0.128.0', true);
+            // ローカル: OrbitControls.js
+            wp_enqueue_script('three-orbitcontrols', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/OrbitControls.js', array('three'), '0.128.0', true);
+
+            // ローカル: TransformControls.js
+            wp_enqueue_script('three-transformcontrols', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/TransformControls.js', array('three'), '0.128.0', true);
 
             wp_enqueue_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-editor', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/edel-editor.js', array('jquery', 'three', 'three-orbitcontrols', 'three-transformcontrols', 'three-gltf-loader'), $version, true);
             wp_localize_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-editor', 'edel_vars', $localize_data);
         } else {
-            wp_enqueue_script('three-pointerlockcontrols', 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js', array('three'), '0.128.0', true);
+            // ローカル: PointerLockControls.js
+            wp_enqueue_script('three-pointerlockcontrols', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/lib/PointerLockControls.js', array('three'), '0.128.0', true);
 
             wp_enqueue_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-viewer', EDEL_MUSEUM_GENERATOR_PRO_URL . '/js/edel-viewer.js', array('jquery', 'three', 'three-pointerlockcontrols', 'three-gltf-loader', 'nipplejs'), $version, true);
             wp_localize_script(EDEL_MUSEUM_GENERATOR_PRO_SLUG . '-viewer', 'edel_vars', $localize_data);
@@ -115,7 +121,6 @@ class EdelMuseumGeneratorFrontPro {
                 'room_brightness' => isset($meta['room_brightness']) ? $meta['room_brightness'] : '1.2',
                 'spot_brightness' => isset($meta['spot_brightness']) ? $meta['spot_brightness'] : '1.0',
                 'movement_speed'  => isset($meta['movement_speed']) ? $meta['movement_speed'] : '20.0',
-                // ★追加: スタート位置
                 'start_position'  => isset($meta['start_position']) ? $meta['start_position'] : 'south',
                 'label_font_size' => isset($meta['label_font_size']) ? intval($meta['label_font_size']) : 30,
                 'label_display'   => isset($meta['label_display']) ? ($meta['label_display'] === '1') : true,
@@ -343,7 +348,7 @@ class EdelMuseumGeneratorFrontPro {
                 </div>
             </div>
 
-            <div id="ai-joystick-zone" style="position:absolute; bottom:20px; left:20px; width:120px; height:120px; z-index:900; display:none;"></div>
+            <div class="ai-joystick-zone" style="display:none;"></div>
 
             <canvas class="ai-museum-canvas" style="display:block; width:100%; background:#000;"></canvas>
 

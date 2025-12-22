@@ -680,15 +680,19 @@ jQuery(document).ready(function ($) {
 
     // --- Save Button ---
     $saveBtn.on('click', function () {
+        // ... (保存処理は変更なし) ...
         if (!postId) return;
         var newLayout = JSON.parse(JSON.stringify(layout));
         artworks.forEach(function (group) {
             var idx = group.userData.index;
-            newLayout.artworks[idx].x = group.position.x;
-            newLayout.artworks[idx].y = group.position.y;
-            newLayout.artworks[idx].z = group.position.z;
-            newLayout.artworks[idx].scale = { x: group.scale.x, y: group.scale.y, z: group.scale.z };
-            newLayout.artworks[idx].rotationY = group.rotation.y;
+            // エラー回避: 配列が存在するか確認
+            if (newLayout.artworks[idx]) {
+                newLayout.artworks[idx].x = group.position.x;
+                newLayout.artworks[idx].y = group.position.y;
+                newLayout.artworks[idx].z = group.position.z;
+                newLayout.artworks[idx].scale = { x: group.scale.x, y: group.scale.y, z: group.scale.z };
+                newLayout.artworks[idx].rotationY = group.rotation.y;
+            }
         });
 
         var originalText = $saveBtn.text();
@@ -713,25 +717,78 @@ jQuery(document).ready(function ($) {
         });
     });
 
+    // ★修正: リセットボタンの挙動変更
     $clearBtn.on('click', function () {
         if (!postId || !confirm(edel_vars.txt_confirm_reset)) return;
-        $clearBtn.prop('disabled', true).text('Processing...');
+
+        var originalText = $clearBtn.text();
+        $clearBtn.prop('disabled', true).text('Restoring...');
+
+        // Ajaxで初期配置データを取得
         $.ajax({
             url: edel_vars.ajaxurl,
             type: 'POST',
-            data: { action: edel_vars.action_clear, post_id: postId, _nonce: edel_vars.nonce },
+            data: { action: edel_vars.action_get_default, post_id: postId, _nonce: edel_vars.nonce },
             success: function (res) {
-                if (res.success) {
-                    alert(res.data.message);
-                    location.reload();
+                $clearBtn.prop('disabled', false).text(originalText);
+
+                if (res.success && res.data && res.data.artworks) {
+                    // レイアウトデータを上書き（メモリ上のみ）
+                    layout = res.data;
+
+                    // 画面上のアートワークを初期位置に戻す
+                    artworks.forEach(function (group) {
+                        var idx = group.userData.index;
+                        var defaultArt = layout.artworks[idx];
+
+                        if (defaultArt) {
+                            // 1. 位置のリセット
+                            group.position.set(defaultArt.x, defaultArt.y, defaultArt.z);
+
+                            // 2. サイズのリセット (userData.baseScaleを使用)
+                            if (group.userData.baseScale) {
+                                var s = group.userData.baseScale;
+                                group.scale.set(s, s, s);
+                            } else {
+                                group.scale.set(1, 1, 1);
+                            }
+
+                            // 3. 回転のリセット (壁の向きに合わせて計算)
+                            var rotY = 0;
+                            var wall = defaultArt.wall || 'north';
+                            var isPillar = wall.includes('_');
+                            var dir = wall;
+                            if (isPillar) dir = wall.split('_')[1];
+
+                            if (isPillar) {
+                                if (dir === 'north') rotY = Math.PI;
+                                else if (dir === 'south') rotY = 0;
+                                else if (dir === 'east') rotY = Math.PI / 2;
+                                else if (dir === 'west') rotY = -Math.PI / 2;
+                            } else {
+                                if (dir === 'north') rotY = 0;
+                                else if (dir === 'south') rotY = Math.PI;
+                                else if (dir === 'east') rotY = -Math.PI / 2;
+                                else if (dir === 'west') rotY = Math.PI / 2;
+                            }
+                            group.rotation.y = rotY;
+                            group.rotation.x = 0;
+                            group.rotation.z = 0;
+                        }
+                    });
+
+                    // 選択解除
+                    deselectArtwork();
+
+                    // 通知を表示
+                    showNotification(edel_vars.txt_reset_notification);
                 } else {
                     alert(edel_vars.txt_error);
-                    $clearBtn.prop('disabled', false).text(edel_vars.txt_reset);
                 }
             },
             error: function () {
+                $clearBtn.prop('disabled', false).text(originalText);
                 alert(edel_vars.txt_error);
-                $clearBtn.prop('disabled', false).text(edel_vars.txt_reset);
             }
         });
     });
